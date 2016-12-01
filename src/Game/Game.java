@@ -1,3 +1,7 @@
+package Game;
+
+import Listeners.PlayerStartedGameListener;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -5,7 +9,7 @@ import java.util.ArrayList;
 /**
  * Created by Kasia on 2016-11-29.
  */
-public class Game {
+public class Game implements PlayerStartedGameListener {
     ArrayList<Room> rooms;
 
 
@@ -40,5 +44,25 @@ public class Game {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void playerLogged(IPlayer player, Login login) {
+
+    }
+
+    @Override
+    public void playerChoseOpponent(IPlayer player, String answer) {
+
+    }
+
+    @Override
+    public void playerDecidedIfNewRoom(IPlayer player, String answer) {
+
+    }
+
+    @Override
+    public void playerChoseRoom(IPlayer player, int numberOfRoom) {
+
     }
 }

@@ -1,3 +1,6 @@
+package Game;
+
+import Listeners.PlayerMadeTurnListener;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -28,7 +31,7 @@ public class Human extends Thread implements IPlayer {
     }
 
     @Override
-    public void makeTurn(OnPlayerMadeTurnListener listener){
+    public void makeTurn(PlayerMadeTurnListener listener){
         Gson gson = new Gson();
 
         try{
@@ -37,7 +40,7 @@ public class Human extends Thread implements IPlayer {
             String response = in.readLine();
 
             Turn turn = gson.fromJson(response, Turn.class);
-            listener.onPlayerMadeTurn(this, turn);
+            listener.playerMadeTurn(this, turn);
 
         }catch (IOException e){
             e.printStackTrace();
