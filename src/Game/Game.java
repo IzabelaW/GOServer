@@ -1,6 +1,6 @@
 package Game;
 
-import Listeners.PlayerStartedGameListener;
+import Listeners.IHumanStartedGameListener;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -9,9 +9,8 @@ import java.util.ArrayList;
 /**
  * Created by Kasia on 2016-11-29.
  */
-public class Game implements PlayerStartedGameListener {
-    ArrayList<Room> rooms;
-
+public class Game implements IHumanStartedGameListener {
+    private ArrayList<Room> rooms;
 
     public Game() {
         rooms = new ArrayList<Room>();
@@ -23,22 +22,9 @@ public class Game implements PlayerStartedGameListener {
             ServerSocket listener = new ServerSocket(8900);
 
             while (true) {
-
                 Human player1 = new Human(listener.accept());
-                if(player1.askIfBot()) {
-                    Human player2 = new Human(listener.accept());
-                    Room room = new Room(player1, player2);
-                    rooms.add(room);
-                    player1.start();
-                    player2.start();
-
-                } else {
-                    Bot player2 = new Bot();
-                    Room room = new Room(player1, player2);
-                    rooms.add(room);
-                    player1.start();
-                    player2.start();
-                }
+                makeHumanLogIn(player1);
+                makeHumanChooseOpponent(player1);
             }
 
         } catch (IOException e) {
@@ -46,23 +32,57 @@ public class Game implements PlayerStartedGameListener {
         }
     }
 
+    private void makeHumanLogIn(Human human){
+        human.logIn(this);
+    }
+
+    private void makeHumanChooseOpponent(Human human){
+        human.chooseOpponent(this);
+    }
+
+    private void makeHumanDecideIfNewRoom(Human human){
+        human.decideIfNewRoom(this);
+    }
+
+    private void makeHumanChooseRoom(Human human){
+        human.chooseRoom(this);
+    }
+
     @Override
-    public void playerLogged(IPlayer player, Login login) {
+    public void humanLogged(Human human, Login login) {
+        human.setLogin(login);
+    }
+
+    @Override
+    public void humanChoseOpponent(Human human, String response) {
+        if(response.equals("BOT")){
+            Bot bot = new Bot();
+            Room room = new Room(human);
+            rooms.add(room);
+            room.setIndex(rooms.indexOf(room));
+            room.setOpponent(bot);
+        }
+        else if(response.equals("HUMAN")){
+            makeHumanDecideIfNewRoom(human);
+        }
 
     }
 
     @Override
-    public void playerChoseOpponent(IPlayer player, String answer) {
-
+    public void humanDecidedIfNewRoom(Human human, String response) {
+        if(response.equals("NEW")){
+            Room room = new Room(human);
+            rooms.add(room);
+            room.setIndex(rooms.indexOf(room));
+        }
+        else if(response.equals("EXISTING")){
+            makeHumanChooseRoom(human);
+        }
     }
 
     @Override
-    public void playerDecidedIfNewRoom(IPlayer player, String answer) {
-
-    }
-
-    @Override
-    public void playerChoseRoom(IPlayer player, int numberOfRoom) {
-
+    public void humanChoseRoom(Human human, int numberOfRoom) {
+        Room chosenRoom = rooms.get(numberOfRoom);
+        chosenRoom.setOpponent(human);
     }
 }

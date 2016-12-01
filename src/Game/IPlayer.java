@@ -1,11 +1,11 @@
 package Game;
 
-import Listeners.PlayerMadeTurnListener;
+import Listeners.IPlayerMadeTurnListener;
 
 /**
  * Created by Kasia on 2016-11-29.
  */
 public interface IPlayer {
 
-    void makeTurn(PlayerMadeTurnListener listener);
+    void makeTurn(IPlayerMadeTurnListener listener);
 }

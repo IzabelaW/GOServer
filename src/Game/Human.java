@@ -1,7 +1,7 @@
 package Game;
 
-import Listeners.PlayerMadeTurnListener;
-import Listeners.PlayerStartedGameListener;
+import Listeners.IPlayerMadeTurnListener;
+import Listeners.IHumanStartedGameListener;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -17,6 +17,7 @@ public class Human extends Thread implements IPlayer {
     private final Socket socket;
     private PrintWriter out;
     private BufferedReader in;
+    private Login login;
 
     public Human(Socket socket){
         this.socket = socket;
@@ -32,7 +33,7 @@ public class Human extends Thread implements IPlayer {
     }
 
     @Override
-    public void makeTurn(PlayerMadeTurnListener listener){
+    public void makeTurn(IPlayerMadeTurnListener listener){
         Gson gson = new Gson();
 
         try{
@@ -49,14 +50,14 @@ public class Human extends Thread implements IPlayer {
 
     }
 
-    public void logIn(PlayerStartedGameListener listener){
+    public void logIn(IHumanStartedGameListener listener){
         Gson gson = new Gson();
 
         try {
 
             String response = in.readLine();
             Login login = gson.fromJson(response, Login.class);
-            listener.playerLogged(this, login);
+            listener.humanLogged(this, login);
 
         } catch (IOException e) {
 
@@ -66,12 +67,12 @@ public class Human extends Thread implements IPlayer {
 
     }
 
-    public void chooseOpponent(PlayerStartedGameListener listener){
+    public void chooseOpponent(IHumanStartedGameListener listener){
 
         try {
 
             String response = in.readLine();
-            listener.playerChoseOpponent(this,response);
+            listener.humanChoseOpponent(this,response);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -79,24 +80,24 @@ public class Human extends Thread implements IPlayer {
 
     }
 
-    public void decideIfNewRoom(PlayerStartedGameListener listener){
+    public void decideIfNewRoom(IHumanStartedGameListener listener){
 
         try {
 
             String response = in.readLine();
-            listener.playerDecidedIfNewRoom(this,response);
+            listener.humanDecidedIfNewRoom(this,response);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void chooseRoom(PlayerStartedGameListener listener){
+    public void chooseRoom(IHumanStartedGameListener listener){
 
         try {
 
             String response = in.readLine();
-            listener.playerChoseRoom(this, Integer.parseInt(response));
+            listener.humanChoseRoom(this, Integer.parseInt(response));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -105,6 +106,13 @@ public class Human extends Thread implements IPlayer {
     }
 
 
+    public void setLogin(Login login) {
+        this.login = login;
+    }
+
+    public Login getLogin() {
+        return login;
+    }
 
 
 }

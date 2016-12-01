@@ -1,13 +1,13 @@
 package Game;
 
-import Listeners.PlayerMadeTurnListener;
+import Listeners.IPlayerMadeTurnListener;
 
 /**
  * Created by Kasia on 2016-11-29.
  */
 public class Bot extends Thread implements IPlayer {
     @Override
-    public void makeTurn(PlayerMadeTurnListener listener) {
+    public void makeTurn(IPlayerMadeTurnListener listener) {
 
     }
 }
