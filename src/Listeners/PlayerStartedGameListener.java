@@ -9,9 +9,9 @@ import Game.Login;
 public interface PlayerStartedGameListener {
     void playerLogged(IPlayer player, Login login);
 
-    void playerChoseOpponent(IPlayer player, String answer);
+    void playerChoseOpponent(IPlayer player, String response);
 
-    void playerDecidedIfNewRoom(IPlayer player, String answer);
+    void playerDecidedIfNewRoom(IPlayer player, String response);
 
     void playerChoseRoom(IPlayer player, int numberOfRoom);
 }

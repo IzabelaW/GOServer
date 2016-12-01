@@ -21,7 +21,7 @@ public class Room implements PlayerMadeTurnListener {
 
 
 
-    public void PlayerMadeTurn(IPlayer player, Turn turn){
+    public void playerMadeTurn(IPlayer player, Turn turn){
         //odebranie odpowiedzi od playera, ktory player wykonal ruch i jaki
     }
 }

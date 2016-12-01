@@ -1,6 +1,7 @@
 package Game;
 
 import Listeners.PlayerMadeTurnListener;
+import Listeners.PlayerStartedGameListener;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -15,7 +16,7 @@ import java.net.Socket;
 public class Human extends Thread implements IPlayer {
     private final Socket socket;
     private PrintWriter out;
-    BufferedReader in;
+    private BufferedReader in;
 
     public Human(Socket socket){
         this.socket = socket;
@@ -48,14 +49,58 @@ public class Human extends Thread implements IPlayer {
 
     }
 
-    public boolean  askIfBot() throws IOException{
-        out.println("IFBOT");
-        String answer = in.readLine();
-        if(answer.equals("YES"))
-            return true;
-        else
-            return false;
+    public void logIn(PlayerStartedGameListener listener){
+        Gson gson = new Gson();
 
+        try {
+
+            String response = in.readLine();
+            Login login = gson.fromJson(response, Login.class);
+            listener.playerLogged(this, login);
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        }
+
+    }
+
+    public void chooseOpponent(PlayerStartedGameListener listener){
+
+        try {
+
+            String response = in.readLine();
+            listener.playerChoseOpponent(this,response);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void decideIfNewRoom(PlayerStartedGameListener listener){
+
+        try {
+
+            String response = in.readLine();
+            listener.playerDecidedIfNewRoom(this,response);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void chooseRoom(PlayerStartedGameListener listener){
+
+        try {
+
+            String response = in.readLine();
+            listener.playerChoseRoom(this, Integer.parseInt(response));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
