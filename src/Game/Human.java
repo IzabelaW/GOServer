@@ -1,7 +1,7 @@
 package Game;
 
-import Listeners.IPlayerMadeTurnListener;
 import Listeners.IHumanStartedGameListener;
+import Listeners.IPlayerMadeTurnListener;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * Created by Kasia on 2016-11-29.
@@ -28,7 +29,6 @@ public class Human extends Thread implements IPlayer {
             e.printStackTrace();
         }
 
-        out.println("WAITING FOR OPPONENT");
 
     }
 
@@ -56,7 +56,8 @@ public class Human extends Thread implements IPlayer {
         try {
 
             String response = in.readLine();
-            Login login = gson.fromJson(response, Login.class);
+            System.out.println(response);
+            Login login = new Login(response);
             listener.humanLogged(this, login);
 
         } catch (IOException e) {
@@ -112,6 +113,10 @@ public class Human extends Thread implements IPlayer {
 
     public Login getLogin() {
         return login;
+    }
+
+    public void sendListOfRooms(ArrayList<String> rooms){
+        out.println(rooms);
     }
 
 

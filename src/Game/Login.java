@@ -4,5 +4,10 @@ package Game;
  * Created by Izabela on 2016-12-01.
  */
 public class Login {
-    public String login;
+    private String login;
+
+    public Login(String login){
+        this.login = login;
+    }
+
 }

@@ -63,6 +63,7 @@ public class Game implements IHumanStartedGameListener {
             room.setOpponent(bot);
         }
         else if(response.equals("HUMAN")){
+            human.sendListOfRooms(listOfRoomsToStringList());
             makeHumanDecideIfNewRoom(human);
         }
 
@@ -84,5 +85,13 @@ public class Game implements IHumanStartedGameListener {
     public void humanChoseRoom(Human human, int numberOfRoom) {
         Room chosenRoom = rooms.get(numberOfRoom);
         chosenRoom.setOpponent(human);
+    }
+    public ArrayList<String> listOfRoomsToStringList(){
+        ArrayList<String> stringListOfRooms = new ArrayList<>();
+        for (Room room : rooms){
+            stringListOfRooms.add(room.toString());
+        }
+
+        return stringListOfRooms;
     }
 }
