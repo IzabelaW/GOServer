@@ -31,7 +31,7 @@ public class Room implements IPlayerMadeTurnListener {
 
 
     public void setIndex(int index) {
-        this.index = index;
+        this.index = index+1;
     }
 
     public int getIndex() {
@@ -40,6 +40,9 @@ public class Room implements IPlayerMadeTurnListener {
 
     @Override
     public String toString(){
-        return index + " " + player.getLogin().toString() + " " + opponent.getLogin().toString();
+        if (opponent != null)
+            return index + " " + player.getLogin().toString() + " " + opponent.getLogin().toString();
+        else
+            return index + " " + player.getLogin().toString() + " " + "-";
     }
 }

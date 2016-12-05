@@ -23,6 +23,7 @@ public class Game implements IHumanStartedGameListener {
 
             while (true) {
                 Human player1 = new Human(listener.accept());
+                player1.start();
                 makeHumanLogIn(player1);
                 makeHumanChooseOpponent(player1);
             }
