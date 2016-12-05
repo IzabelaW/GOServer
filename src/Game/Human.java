@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 /**
@@ -22,17 +23,15 @@ public class Human extends Thread implements IPlayer {
     private int indexOfRoom;
     private String response;
 
-    public Human(Socket socket) throws IOException {
+    public Human(Socket socket) {
         this.socket = socket;
         try {
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         }
-        finally {
-            socket.close();
+        catch (IOException e){
+            e.printStackTrace();
         }
-
-
     }
 
     @Override
@@ -54,45 +53,35 @@ public class Human extends Thread implements IPlayer {
     }
 
     public synchronized void logIn(IHumanStartedGameListener listener){
-        Gson gson = new Gson();
-
-        try {
-
-            String response = in.readLine();
+        if (!ifExit()) {
             System.out.println(response);
             Login login = new Login(response);
             listener.humanLogged(this, login);
 
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
+        } else {
+            disconnectPlayer();
         }
 
     }
 
     public synchronized void chooseOpponent(IHumanStartedGameListener listener){
 
-        try {
-
-            String response = in.readLine();
+        if (!ifExit()) {
             listener.humanChoseOpponent(this,response);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        else {
+            disconnectPlayer();
         }
 
     }
 
     public synchronized void decideIfNewRoom(IHumanStartedGameListener listener){
 
-        try {
-
-            String response = in.readLine();
+        if (!ifExit()) {
             listener.humanDecidedIfNewRoom(this,response);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        else {
+            disconnectPlayer();
         }
     }
 
@@ -102,7 +91,7 @@ public class Human extends Thread implements IPlayer {
             listener.humanChoseRoom(this, Integer.parseInt(response));
         }
         else {
-            deletePlayer(listener);
+            disconnectPlayer();
         }
 
     }
@@ -118,20 +107,21 @@ public class Human extends Thread implements IPlayer {
 
     public void setIndexOfRoom(int index){ indexOfRoom = index;}
 
-    public int getIndexOfRoom(){return indexOfRoom;}
+    public int getIndexOfRoom(){ return indexOfRoom; }
 
     public void sendListOfRooms(ArrayList<String> rooms){
         out.println(rooms);
     }
 
-    private boolean ifExit(){
+    private boolean ifExit() {
         try {
-            String response = in.readLine();
-            if (response.equals("EXIT"))
+            response = in.readLine();
+            if (response.equals("EXIT")){
                 return true;
-            else
+            }
+            else{
                 return false;
-
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return false;
