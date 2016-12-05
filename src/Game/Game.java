@@ -17,10 +17,11 @@ public class Game implements IHumanStartedGameListener {
 
     }
 
-    public void startGame() {
-        try {
-            ServerSocket listener = new ServerSocket(8900);
+    public void startGame() throws IOException {
 
+        ServerSocket listener = new ServerSocket(8900);
+
+        try {
             while (true) {
                 Human player1 = new Human(listener.accept());
                 player1.start();
@@ -28,8 +29,8 @@ public class Game implements IHumanStartedGameListener {
                 makeHumanChooseOpponent(player1);
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } finally {
+            listener.close();
         }
     }
 
@@ -76,6 +77,7 @@ public class Game implements IHumanStartedGameListener {
             Room room = new Room(human);
             rooms.add(room);
             room.setIndex(rooms.indexOf(room));
+            human.setIndexOfRoom(room.getIndex());
         }
         else if(response.equals("EXISTING")){
             makeHumanChooseRoom(human);
@@ -86,7 +88,14 @@ public class Game implements IHumanStartedGameListener {
     public void humanChoseRoom(Human human, int numberOfRoom) {
         Room chosenRoom = rooms.get(numberOfRoom);
         chosenRoom.setOpponent(human);
+        human.setIndexOfRoom(chosenRoom.getIndex());
     }
+
+    @Override
+    public void humanExited(int indexOfRoom, Login login){
+        rooms.get(indexOfRoom).deletePlayer(login);
+    }
+
     public ArrayList<String> listOfRoomsToStringList(){
         ArrayList<String> stringListOfRooms = new ArrayList<>();
         for (Room room : rooms){

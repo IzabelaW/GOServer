@@ -29,6 +29,14 @@ public class Room implements IPlayerMadeTurnListener {
         //odebranie odpowiedzi od playera, ktory player wykonal ruch i jaki
     }
 
+    public void deletePlayer(Login login){
+        if(player.getLogin().equals(login)){
+            player=null;
+        }
+        else
+            opponent=null;
+    }
+
 
     public void setIndex(int index) {
         this.index = index+1;

@@ -15,4 +15,6 @@ public interface IHumanStartedGameListener {
     void humanDecidedIfNewRoom(Human human, String response);
 
     void humanChoseRoom(Human human, int indexOfRoom);
+
+    void humanExited(int indexOfRoom, Login login);
 }

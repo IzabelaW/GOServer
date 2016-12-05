@@ -19,14 +19,17 @@ public class Human extends Thread implements IPlayer {
     private PrintWriter out;
     private BufferedReader in;
     private Login login;
+    private int indexOfRoom;
+    private String response;
 
-    public Human(Socket socket){
+    public Human(Socket socket) throws IOException {
         this.socket = socket;
         try {
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        finally {
+            socket.close();
         }
 
 
@@ -95,13 +98,11 @@ public class Human extends Thread implements IPlayer {
 
     public synchronized void chooseRoom(IHumanStartedGameListener listener){
 
-        try {
-
-            String response = in.readLine();
+        if (!ifExit()) {
             listener.humanChoseRoom(this, Integer.parseInt(response));
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        else {
+            deletePlayer(listener);
         }
 
     }
@@ -115,8 +116,39 @@ public class Human extends Thread implements IPlayer {
         return login;
     }
 
+    public void setIndexOfRoom(int index){ indexOfRoom = index;}
+
+    public int getIndexOfRoom(){return indexOfRoom;}
+
     public void sendListOfRooms(ArrayList<String> rooms){
         out.println(rooms);
+    }
+
+    private boolean ifExit(){
+        try {
+            String response = in.readLine();
+            if (response.equals("EXIT"))
+                return true;
+            else
+                return false;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private void deletePlayer(IHumanStartedGameListener listener){
+        listener.humanExited(indexOfRoom, login);
+    }
+
+    private void disconnectPlayer(){
+        try {
+            socket.close();
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
