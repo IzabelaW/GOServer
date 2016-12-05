@@ -33,7 +33,7 @@ public class Human extends Thread implements IPlayer {
     }
 
     @Override
-    public void makeTurn(IPlayerMadeTurnListener listener){
+    public synchronized void makeTurn(IPlayerMadeTurnListener listener){
         Gson gson = new Gson();
 
         try{
@@ -50,7 +50,7 @@ public class Human extends Thread implements IPlayer {
 
     }
 
-    public void logIn(IHumanStartedGameListener listener){
+    public synchronized void logIn(IHumanStartedGameListener listener){
         Gson gson = new Gson();
 
         try {
@@ -68,7 +68,7 @@ public class Human extends Thread implements IPlayer {
 
     }
 
-    public void chooseOpponent(IHumanStartedGameListener listener){
+    public synchronized void chooseOpponent(IHumanStartedGameListener listener){
 
         try {
 
@@ -81,7 +81,7 @@ public class Human extends Thread implements IPlayer {
 
     }
 
-    public void decideIfNewRoom(IHumanStartedGameListener listener){
+    public synchronized void decideIfNewRoom(IHumanStartedGameListener listener){
 
         try {
 
@@ -93,7 +93,7 @@ public class Human extends Thread implements IPlayer {
         }
     }
 
-    public void chooseRoom(IHumanStartedGameListener listener){
+    public synchronized void chooseRoom(IHumanStartedGameListener listener){
 
         try {
 
@@ -118,6 +118,8 @@ public class Human extends Thread implements IPlayer {
     public void sendListOfRooms(ArrayList<String> rooms){
         out.println(rooms);
     }
+
+
 
 
 }

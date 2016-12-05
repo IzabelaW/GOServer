@@ -37,4 +37,9 @@ public class Room implements IPlayerMadeTurnListener {
     public int getIndex() {
         return index;
     }
+
+    @Override
+    public String toString(){
+        return index + " " + player.getLogin().toString() + " " + opponent.getLogin().toString();
+    }
 }

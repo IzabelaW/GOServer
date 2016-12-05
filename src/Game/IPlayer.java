@@ -8,4 +8,7 @@ import Listeners.IPlayerMadeTurnListener;
 public interface IPlayer {
 
     void makeTurn(IPlayerMadeTurnListener listener);
+
+    Login getLogin();
+
 }
