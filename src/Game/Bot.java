@@ -3,10 +3,16 @@ package Game;
 import Listeners.IPlayerMadeTurnListener;
 
 /**
- * Created by Kasia on 2016-11-29.
+Class which represents Bot in Server.
+ Bot is a single thread and implements interface IPlayer.
  */
+
 public class Bot extends Thread implements IPlayer {
+    /**
+     * Default login of bot
+     */
     Login login;
+
     @Override
     public void makeTurn(IPlayerMadeTurnListener listener) {
 

@@ -7,9 +7,12 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 
 /**
- * Created by Kasia on 2016-11-29.
+ * Class which coordinates the game. Observes initial actions of human.
  */
 public class Game implements IHumanStartedGameListener {
+    /**
+     * List of rooms.
+     */
     private ArrayList<Room> rooms;
 
     public Game() {
@@ -17,6 +20,11 @@ public class Game implements IHumanStartedGameListener {
 
     }
 
+    /**
+     * Engages start of the game for each client. Makes socket on a specific port, accepts clients, starts their threads,
+     * then calls methods that take care of starting game.
+     * @throws IOException
+     */
     public void startGame() throws IOException {
 
         ServerSocket listener = new ServerSocket(8900);
@@ -34,27 +42,53 @@ public class Game implements IHumanStartedGameListener {
         }
     }
 
+    /**
+     * Delegates request to log to the particular Human.
+     * @param human
+     */
     private void makeHumanLogIn(Human human){
         human.logIn(this);
     }
 
+    /**
+     * Delegates request to choose opponent to the particular Human.
+     * @param human
+     */
     private void makeHumanChooseOpponent(Human human){
         human.chooseOpponent(this);
     }
 
+    /**
+     * Delegates request to the particular Human to choose if he wants to play in new room or in existing one.
+     * @param human
+     */
     private void makeHumanDecideIfNewRoom(Human human){
         human.decideIfNewRoom(this);
     }
 
+    /**
+     * Delegates request to choose room to the particular Human.
+     * @param human
+     */
     private void makeHumanChooseRoom(Human human){
         human.chooseRoom(this);
     }
 
+    /**
+     * Assigns login to human.
+     * @param human
+     * @param login
+     */
     @Override
     public void humanLogged(Human human, Login login) {
         human.setLogin(login);
     }
 
+    /**
+     * Takes different actions depending on the response of human about the type of his opponent.
+     * @param human
+     * @param response
+     */
     @Override
     public void humanChoseOpponent(Human human, String response) {
         if(response.equals("BOT")){
@@ -65,12 +99,18 @@ public class Game implements IHumanStartedGameListener {
             room.setOpponent(bot);
         }
         else if(response.equals("HUMAN")){
-            human.sendListOfRooms(listOfRoomsToStringList());
+            human.sendListOfRooms(listOfRoomsToStringList()); //sends the list of rooms to the particular human to show him it
             makeHumanDecideIfNewRoom(human);
         }
 
     }
 
+    /**
+     * Takes different actions depending on the response of human about the fact whether he want to play in new room or
+     * in existing one.
+     * @param human
+     * @param response
+     */
     @Override
     public void humanDecidedIfNewRoom(Human human, String response) {
         if(response.equals("NEW")){
@@ -84,6 +124,11 @@ public class Game implements IHumanStartedGameListener {
         }
     }
 
+    /**
+     * Called when human decicded to play in existing room, assigns him to this room.
+     * @param human
+     * @param numberOfRoom
+     */
     @Override
     public void humanChoseRoom(Human human, int numberOfRoom) {
         Room chosenRoom = rooms.get(numberOfRoom);
@@ -96,6 +141,10 @@ public class Game implements IHumanStartedGameListener {
         rooms.get(indexOfRoom).deletePlayer(login);
     }
 
+    /**
+     * Parse the list of rooms
+     * @return parsed list of rooms
+     */
     public ArrayList<String> listOfRoomsToStringList(){
         ArrayList<String> stringListOfRooms = new ArrayList<>();
         for (Room room : rooms){
