@@ -3,12 +3,14 @@ package Game;
 import Listeners.IHumanStartedGameListener;
 import Listeners.IPlayerMadeTurnListener;
 import com.google.gson.Gson;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 /**
@@ -85,16 +87,14 @@ public class Human extends Thread implements IPlayer {
      * Receives login from the particular client and delegates it to the one of listeners of Human.
      * @param listener of initial part of game.
      */
-    public synchronized void logIn(IHumanStartedGameListener listener){
-        if (!ifExit()) {
-            System.out.println(response);
+    public synchronized void logIn(IHumanStartedGameListener listener) throws SocketException {
+        try {
+            String response = in.readLine();
             Login login = new Login(response);
             listener.humanLogged(this, login);
-
-        } else {
-            disconnectPlayer();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
     }
 
     /**
@@ -102,15 +102,14 @@ public class Human extends Thread implements IPlayer {
      * the one of listeners of Human.
      * @param listener of initial part of game.
      */
-    public synchronized void chooseOpponent(IHumanStartedGameListener listener){
-
-        if (!ifExit()) {
+    public synchronized void chooseOpponent(IHumanStartedGameListener listener) throws SocketException{
+        try {
+            String response = in.readLine();
             listener.humanChoseOpponent(this,response);
-        }
-        else {
-            disconnectPlayer();
-        }
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -118,13 +117,12 @@ public class Human extends Thread implements IPlayer {
      * and delegates it to the one of listeners of Human.
      * @param listener of initial part of game.
      */
-    public synchronized void decideIfNewRoom(IHumanStartedGameListener listener){
-
-        if (!ifExit()) {
+    public synchronized void decideIfNewRoom(IHumanStartedGameListener listener) throws SocketException{
+        try {
+            String response = in.readLine();
             listener.humanDecidedIfNewRoom(this,response);
-        }
-        else {
-            disconnectPlayer();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -133,17 +131,14 @@ public class Human extends Thread implements IPlayer {
      * and delegates it to the one of listeners of Human.
      * @param listener of initial part of game.
      */
-    public synchronized void chooseRoom(IHumanStartedGameListener listener){
-
-        if (!ifExit()) {
+    public synchronized void chooseRoom(IHumanStartedGameListener listener) throws SocketException{
+        try {
+            String response = in.readLine();
             listener.humanChoseRoom(this, Integer.parseInt(response));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        else {
-            disconnectPlayer();
-        }
-
     }
-
 
     /**
      * Sets the login.
@@ -183,25 +178,6 @@ public class Human extends Thread implements IPlayer {
     }
 
     /**
-     * Checks if client closed the window.
-     * @return if client closed the window or not.
-     */
-    private boolean ifExit() {
-        try {
-            response = in.readLine();
-            if (response.equals("EXIT")){
-                return true;
-            }
-            else{
-                return false;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
      * Delegates the necessary information about human who exited to the one of listeners of Human.
      * @param listener of initial part of game.
      */
@@ -209,7 +185,7 @@ public class Human extends Thread implements IPlayer {
         listener.humanExited(indexOfRoom, login);
     }
 
-    private void disconnectPlayer(){
+    public void disconnectPlayer(){
         try {
             socket.close();
         }
@@ -217,8 +193,4 @@ public class Human extends Thread implements IPlayer {
             e.printStackTrace();
         }
     }
-
-
-
-
 }

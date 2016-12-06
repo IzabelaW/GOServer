@@ -4,6 +4,7 @@ import Listeners.IHumanStartedGameListener;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 /**
@@ -47,31 +48,47 @@ public class Game implements IHumanStartedGameListener {
      * @param human
      */
     private void makeHumanLogIn(Human human){
-        human.logIn(this);
+        try {
+            human.logIn(this);
+        } catch (SocketException e) {
+            human.disconnectPlayer();
+        }
     }
 
     /**
      * Delegates request to choose opponent to the particular Human.
      * @param human
      */
-    private void makeHumanChooseOpponent(Human human){
-        human.chooseOpponent(this);
+    private void makeHumanChooseOpponent(Human human) {
+        try {
+            human.chooseOpponent(this);
+        } catch (SocketException e) {
+            human.disconnectPlayer();
+        }
     }
 
     /**
      * Delegates request to the particular Human to choose if he wants to play in new room or in existing one.
      * @param human
      */
-    private void makeHumanDecideIfNewRoom(Human human){
-        human.decideIfNewRoom(this);
+    private void makeHumanDecideIfNewRoom(Human human) {
+        try {
+            human.decideIfNewRoom(this);
+        } catch (SocketException e) {
+            human.disconnectPlayer();
+        }
     }
 
     /**
      * Delegates request to choose room to the particular Human.
      * @param human
      */
-    private void makeHumanChooseRoom(Human human){
-        human.chooseRoom(this);
+    private void makeHumanChooseRoom(Human human) {
+        try {
+            human.chooseRoom(this);
+        } catch (SocketException e) {
+            human.disconnectPlayer();
+        }
     }
 
     /**
