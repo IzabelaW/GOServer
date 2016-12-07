@@ -113,10 +113,12 @@ public class Game implements IHumanStartedGameListener {
             Room room = new Room(human);
             rooms.add(room);
             room.setIndex(rooms.indexOf(room));
-            room.setOpponent(bot);
+            room.setJoiner(bot);
         }
         else if(response.equals("HUMAN")){
-            human.sendListOfRooms(listOfRoomsToStringList()); //sends the list of rooms to the particular human to show him it
+            human.sendLists(listOfIndexesToString());
+            human.sendLists(listOfInitiatorsLoginsToString());
+            human.sendLists(listOfJoinersLoginsToString());//sends the list of rooms to the particular human to show him it
             makeHumanDecideIfNewRoom(human);
         }
 
@@ -135,6 +137,7 @@ public class Game implements IHumanStartedGameListener {
             rooms.add(room);
             room.setIndex(rooms.indexOf(room));
             human.setIndexOfRoom(room.getIndex());
+            human.setPlayerColor(PlayerColor.WHITE);
         }
         else if(response.equals("EXISTING")){
             makeHumanChooseRoom(human);
@@ -142,32 +145,57 @@ public class Game implements IHumanStartedGameListener {
     }
 
     /**
-     * Called when human decicded to play in existing room, assigns him to this room.
+     * Called when human decided to play in existing room, assigns him to this room.
      * @param human
      * @param numberOfRoom
      */
     @Override
     public void humanChoseRoom(Human human, int numberOfRoom) {
         Room chosenRoom = rooms.get(numberOfRoom);
-        chosenRoom.setOpponent(human);
+        chosenRoom.setJoiner(human);
         human.setIndexOfRoom(chosenRoom.getIndex());
-    }
-
-    @Override
-    public void humanExited(int indexOfRoom, Login login){
-        rooms.get(indexOfRoom).deletePlayer(login);
+        human.setPlayerColor(PlayerColor.BLACK);
+        chosenRoom.turnForPlayer(human);
+        human.setOpponent(chosenRoom.getInitiator());
+        chosenRoom.getInitiator().setOpponent(human);
     }
 
     /**
-     * Parse the list of rooms
-     * @return parsed list of rooms
+     * Parse the list of indexes to String.
+     * @return parsed list of indexes.
      */
-    public ArrayList<String> listOfRoomsToStringList(){
-        ArrayList<String> stringListOfRooms = new ArrayList<>();
+    public ArrayList<String> listOfIndexesToString(){
+        ArrayList<String> stringListOfIndexes = new ArrayList<>();
         for (Room room : rooms){
-            stringListOfRooms.add(room.toString());
+            stringListOfIndexes.add(Integer.toString(room.getIndex()));
         }
 
-        return stringListOfRooms;
+        return stringListOfIndexes;
+    }
+
+    /**
+     * Parse the list of initiators logins to String.
+     * @return parsed list of initiators' logins.
+     */
+    public ArrayList<String> listOfInitiatorsLoginsToString(){
+        ArrayList<String> stringListOfPlayer1Logins = new ArrayList<>();
+        for (Room room : rooms){
+            stringListOfPlayer1Logins.add(room.getInitiator().getLogin().toString());
+        }
+
+        return stringListOfPlayer1Logins;
+    }
+
+    /**
+     * Parse the list of joiners logins to String.
+     * @return parsed list of joiners' logins.
+     */
+    public ArrayList<String> listOfJoinersLoginsToString(){
+        ArrayList<String> stringListOfPlayer2Logins = new ArrayList<>();
+        for (Room room: rooms){
+            stringListOfPlayer2Logins.add(room.getJoiner().getLogin().toString());
+        }
+
+        return stringListOfPlayer2Logins;
     }
 }

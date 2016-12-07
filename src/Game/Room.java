@@ -1,42 +1,55 @@
 package Game;
 
-import Listeners.IPlayerMadeTurnListener;
+import Listeners.IPlayerMadeGameDecisionListener;
+
+import java.util.ArrayList;
 
 /**
  * Created by Kasia on 2016-11-29.
  */
-public class Room implements IPlayerMadeTurnListener {
+public class Room implements IPlayerMadeGameDecisionListener {
     private Board board;
-    private IPlayer player;
-    private IPlayer opponent;
+    private IPlayer initiator;
+    private IPlayer joiner;
     private int index;
 
-    public Room(IPlayer player){
-        this.player = player;
+    public Room(IPlayer initiator){
+        this.initiator = initiator;
+        board = new Board();
     }
 
-    public void setOpponent(IPlayer opponent){
-        this.opponent = opponent;
+    public IPlayer getInitiator() {
+        return initiator;
+    }
+
+    public IPlayer getJoiner() { return joiner; }
+
+    public void setJoiner(IPlayer joiner){
+        this.joiner = joiner;
     }
 
     public void turnForPlayer(IPlayer player){
-        player.makeTurn(this);
+        player.makeGameDecision(this);
     }
 
-
-
+    @Override
     public void playerMadeTurn(IPlayer player, Turn turn){
-        //odebranie odpowiedzi od playera, ktory player wykonal ruch i jaki
+        //odebranie odpowiedzi od playera, ktory initiator wykonal ruch i jaki
+
+        ArrayList<String> updatedBoard = boardToString(board.getBoard());
+
+        board.analizeTurn(turn);
+
+        player.sendUpdatedBoard(updatedBoard);
+        player.getOpponent().sendUpdatedBoard(updatedBoard);
+
+        turnForPlayer(player.getOpponent());
     }
 
-    public void deletePlayer(Login login){
-        if(player.getLogin().equals(login)){
-            player=null;
-        }
-        else
-            opponent=null;
-    }
+    @Override
+    public void playersPassed() {
 
+    }
 
     public void setIndex(int index) {
         this.index = index+1;
@@ -48,9 +61,23 @@ public class Room implements IPlayerMadeTurnListener {
 
     @Override
     public String toString(){
-        if (opponent != null)
-            return index + " " + player.getLogin().toString() + " " + opponent.getLogin().toString();
+        if (joiner != null)
+            return index + " " + initiator.getLogin().toString() + " " + joiner.getLogin().toString();
         else
-            return index + " " + player.getLogin().toString() + " " + "-";
+            return index + " " + initiator.getLogin().toString() + " " + "-";
+    }
+
+    private ArrayList<String> boardToString(PlayerColor[][] board){
+        ArrayList<String> updatedBoard = new ArrayList<>();
+
+        for (int i = 0; i < 19; i++){
+            for (int j = 0; j < 19; j++){
+                updatedBoard.add(i + " " + j + board[i][j]);
+            }
+        }
+
+        return updatedBoard;
     }
 }
+
+

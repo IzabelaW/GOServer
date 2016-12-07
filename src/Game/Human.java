@@ -1,9 +1,7 @@
 package Game;
 
 import Listeners.IHumanStartedGameListener;
-import Listeners.IPlayerMadeTurnListener;
-import com.google.gson.Gson;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import Listeners.IPlayerMadeGameDecisionListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,9 +42,20 @@ public class Human extends Thread implements IPlayer {
     private int indexOfRoom;
 
     /**
-     * Response from a particular client.
+     * Color of player's stones.
      */
-    private String response;
+    private PlayerColor playerColor;
+
+    /**
+     * Opponent of the player.
+     */
+    private IPlayer opponent;
+
+    /**
+     * Statement if one of players passed.
+     */
+    public boolean ifOpponentPassed = false;
+
 
     public Human(Socket socket) {
         this.socket = socket;
@@ -66,16 +75,35 @@ public class Human extends Thread implements IPlayer {
      * @param listener of making turns by human
      */
     @Override
-    public synchronized void makeTurn(IPlayerMadeTurnListener listener){
-        Gson gson = new Gson();
+    public synchronized void makeGameDecision(IPlayerMadeGameDecisionListener listener){
 
         try{
             out.println("MAKE_TURN");
 
             String response = in.readLine();
 
-            Turn turn = gson.fromJson(response, Turn.class);
-            listener.playerMadeTurn(this, turn);
+            if(response.startsWith("TURN")) {
+
+                String[] move = response.split(" ");
+                Turn turn = new Turn(Integer.parseInt(move[1]), Integer.parseInt(move[2]), playerColor);
+
+                listener.playerMadeTurn(this, turn);
+
+            } else if (response.equals("PASS")){
+
+                if(ifOpponentPassed){
+                       listener.playersPassed();
+                }
+                else {
+                    opponent.opponentPassed();
+                    opponent.makeGameDecision(listener);
+                    return;
+                }
+            }
+            else if (response.equals("WANNA_GIVE_UP")){
+                opponent.opponentGaveUp();
+                disconnectPlayer();
+            }
 
         }catch (IOException e){
             e.printStackTrace();
@@ -162,7 +190,6 @@ public class Human extends Thread implements IPlayer {
      */
     public void setIndexOfRoom(int index){ indexOfRoom = index;}
 
-
     /**
      * Gets the index of room Human plays in.
      * @return index of room.
@@ -170,20 +197,66 @@ public class Human extends Thread implements IPlayer {
     public int getIndexOfRoom(){ return indexOfRoom; }
 
     /**
-     * Sends list of rooms to the particular client
-     * @param rooms - list of rooms
+     * Sets color of player's stones.
+     * @param playerColor - color of player's stones.
      */
-    public void sendListOfRooms(ArrayList<String> rooms){
-        out.println(rooms);
+    public void setPlayerColor(PlayerColor playerColor) {
+        this.playerColor = playerColor;
     }
 
     /**
-     * Delegates the necessary information about human who exited to the one of listeners of Human.
-     * @param listener of initial part of game.
+     * Gets color of player's stones.
+     * @return color of player's stones.
      */
-    private void deletePlayer(IHumanStartedGameListener listener){
-        listener.humanExited(indexOfRoom, login);
+    public PlayerColor getPlayerColor(){
+        return playerColor;
     }
+
+    /**
+     * Sets opponent of the player.
+     * @param opponent - opponent of the player.
+     */
+    public void setOpponent(IPlayer opponent) {
+        this.opponent = opponent;
+    }
+
+    /**
+     * Gets opponent of the player.
+     * @return opponent of the player.
+     */
+    public IPlayer getOpponent() {
+        return opponent;
+    }
+
+    /**
+     * Sends list to the particular client.
+     * @param list - list.
+     */
+    public void sendLists(ArrayList<String> list){
+        out.println(list);
+    }
+
+    /**
+     * Sends table of updated fields on the board.
+     * @param updatedBoard - updated board.
+     */
+    public void sendUpdatedBoard(ArrayList<String> updatedBoard) { out.println("UPDATED_BOARD " + updatedBoard);}
+
+    /**
+     * Sends message to player when his opponent has just passed.
+     */
+    public void opponentPassed() {
+        ifOpponentPassed=true;
+        out.println("OPPONENT_PASSED");
+    }
+
+    /**
+     * Sends message to player when his opponent has just gave up.
+     */
+    public void opponentGaveUp(){
+        out.println("OPPONENT_GAVE_UP");
+    }
+
 
     public void disconnectPlayer(){
         try {

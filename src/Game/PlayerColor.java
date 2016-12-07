@@ -1,8 +1,8 @@
 package Game;
 
 /**
- * Created by Kasia on 2016-11-29.
+ * Created by Izabela on 2016-12-07.
  */
 public enum PlayerColor {
-    BLACK, WHITE;
+    BLACK,WHITE;
 }
