@@ -2,6 +2,7 @@ package Game;
 
 import Listeners.IPlayerMadeGameDecisionListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -29,16 +30,21 @@ public class Room implements IPlayerMadeGameDecisionListener {
     }
 
     public void turnForPlayer(IPlayer player){
-        player.makeGameDecision(this);
+        try {
+            player.makeGameDecision(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void playerMadeTurn(IPlayer player, Turn turn){
         //odebranie odpowiedzi od playera, ktory initiator wykonal ruch i jaki
 
+        board.analyzeTurn(turn);
+
         ArrayList<String> updatedBoard = boardToString(board.getBoard());
 
-        board.analyzeTurn(turn);
 
         player.sendUpdatedBoard(updatedBoard);
         player.getOpponent().sendUpdatedBoard(updatedBoard);
@@ -72,7 +78,7 @@ public class Room implements IPlayerMadeGameDecisionListener {
 
         for (int i = 0; i < 19; i++){
             for (int j = 0; j < 19; j++){
-                updatedBoard.add(i + " " + j + board[i][j]);
+                updatedBoard.add("" + board[i][j]);
             }
         }
 

@@ -75,7 +75,7 @@ public class Human extends Thread implements IPlayer {
      * @param listener of making turns by human
      */
     @Override
-    public synchronized void makeGameDecision(IPlayerMadeGameDecisionListener listener){
+    public void makeGameDecision(IPlayerMadeGameDecisionListener listener) throws IOException{
 
         try{
             out.println("MAKE_TURN");
@@ -86,7 +86,6 @@ public class Human extends Thread implements IPlayer {
 
                 String[] move = response.split(" ");
                 Turn turn = new Turn(Integer.parseInt(move[1]), Integer.parseInt(move[2]), playerColor);
-
                 listener.playerMadeTurn(this, turn);
 
             } else if (response.equals("PASS")){
@@ -115,14 +114,12 @@ public class Human extends Thread implements IPlayer {
      * Receives login from the particular client and delegates it to the one of listeners of Human.
      * @param listener of initial part of game.
      */
-    public synchronized void logIn(IHumanStartedGameListener listener) throws SocketException {
-        try {
-            String response = in.readLine();
-            Login login = new Login(response);
-            listener.humanLogged(this, login);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void logIn(IHumanStartedGameListener listener) throws IOException {
+
+        String response = in.readLine();
+        Login login = new Login(response);
+        listener.humanLogged(this, login);
+
     }
 
     /**
@@ -130,14 +127,11 @@ public class Human extends Thread implements IPlayer {
      * the one of listeners of Human.
      * @param listener of initial part of game.
      */
-    public synchronized void chooseOpponent(IHumanStartedGameListener listener) throws SocketException{
-        try {
-            String response = in.readLine();
-            listener.humanChoseOpponent(this,response);
+    public void chooseOpponent(IHumanStartedGameListener listener) throws IOException{
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String response = in.readLine();
+        listener.humanChoseOpponent(this,response);
+
     }
 
     /**
@@ -145,13 +139,11 @@ public class Human extends Thread implements IPlayer {
      * and delegates it to the one of listeners of Human.
      * @param listener of initial part of game.
      */
-    public synchronized void decideIfNewRoom(IHumanStartedGameListener listener) throws SocketException{
-        try {
-            String response = in.readLine();
-            listener.humanDecidedIfNewRoom(this,response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void decideIfNewRoom(IHumanStartedGameListener listener) throws IOException{
+
+        String response = in.readLine();
+        listener.humanDecidedIfNewRoom(this,response);
+
     }
 
     /**
@@ -159,13 +151,11 @@ public class Human extends Thread implements IPlayer {
      * and delegates it to the one of listeners of Human.
      * @param listener of initial part of game.
      */
-    public synchronized void chooseRoom(IHumanStartedGameListener listener) throws SocketException{
-        try {
-            String response = in.readLine();
-            listener.humanChoseRoom(this, Integer.parseInt(response));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void chooseRoom(IHumanStartedGameListener listener) throws IOException{
+
+        String response = in.readLine();
+        listener.humanChoseRoom(this, Integer.parseInt(response));
+
     }
 
     /**
@@ -229,11 +219,11 @@ public class Human extends Thread implements IPlayer {
     }
 
     /**
-     * Sends list to the particular client.
-     * @param list - list.
+     * Sends list of rooms to the particular client
+     * @param rooms - list of rooms
      */
-    public void sendLists(ArrayList<String> list){
-        out.println(list);
+    public void sendLists(ArrayList<String> rooms){
+        out.println(rooms);
     }
 
     /**

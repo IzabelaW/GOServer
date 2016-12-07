@@ -50,7 +50,7 @@ public class Game implements IHumanStartedGameListener {
     private void makeHumanLogIn(Human human){
         try {
             human.logIn(this);
-        } catch (SocketException e) {
+        } catch (IOException e) {
             human.disconnectPlayer();
         }
     }
@@ -62,7 +62,7 @@ public class Game implements IHumanStartedGameListener {
     private void makeHumanChooseOpponent(Human human) {
         try {
             human.chooseOpponent(this);
-        } catch (SocketException e) {
+        } catch (IOException e) {
             human.disconnectPlayer();
         }
     }
@@ -74,7 +74,7 @@ public class Game implements IHumanStartedGameListener {
     private void makeHumanDecideIfNewRoom(Human human) {
         try {
             human.decideIfNewRoom(this);
-        } catch (SocketException e) {
+        } catch (IOException e) {
             human.disconnectPlayer();
         }
     }
@@ -86,7 +86,7 @@ public class Game implements IHumanStartedGameListener {
     private void makeHumanChooseRoom(Human human) {
         try {
             human.chooseRoom(this);
-        } catch (SocketException e) {
+        } catch (IOException e) {
             human.disconnectPlayer();
         }
     }
@@ -155,9 +155,10 @@ public class Game implements IHumanStartedGameListener {
         chosenRoom.setJoiner(human);
         human.setIndexOfRoom(chosenRoom.getIndex());
         human.setPlayerColor(PlayerColor.BLACK);
-        //chosenRoom.turnForPlayer(human);
         human.setOpponent(chosenRoom.getInitiator());
         chosenRoom.getInitiator().setOpponent(human);
+        chosenRoom.turnForPlayer(human);
+
     }
 
     /**

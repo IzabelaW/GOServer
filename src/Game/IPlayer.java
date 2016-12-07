@@ -2,6 +2,7 @@ package Game;
 
 import Listeners.IPlayerMadeGameDecisionListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -9,7 +10,7 @@ import java.util.ArrayList;
  */
 public interface IPlayer {
 
-    void makeGameDecision(IPlayerMadeGameDecisionListener listener);
+    void makeGameDecision(IPlayerMadeGameDecisionListener listener) throws IOException;
 
     Login getLogin();
 
