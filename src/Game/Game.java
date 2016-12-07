@@ -155,7 +155,7 @@ public class Game implements IHumanStartedGameListener {
         chosenRoom.setJoiner(human);
         human.setIndexOfRoom(chosenRoom.getIndex());
         human.setPlayerColor(PlayerColor.BLACK);
-        chosenRoom.turnForPlayer(human);
+        //chosenRoom.turnForPlayer(human);
         human.setOpponent(chosenRoom.getInitiator());
         chosenRoom.getInitiator().setOpponent(human);
     }
@@ -193,7 +193,10 @@ public class Game implements IHumanStartedGameListener {
     public ArrayList<String> listOfJoinersLoginsToString(){
         ArrayList<String> stringListOfPlayer2Logins = new ArrayList<>();
         for (Room room: rooms){
-            stringListOfPlayer2Logins.add(room.getJoiner().getLogin().toString());
+            if(room.getJoiner() != null)
+                stringListOfPlayer2Logins.add(room.getJoiner().getLogin().toString());
+            else
+                stringListOfPlayer2Logins.add("-");
         }
 
         return stringListOfPlayer2Logins;

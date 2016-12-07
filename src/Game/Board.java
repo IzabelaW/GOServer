@@ -1,7 +1,5 @@
 package Game;
 
-import java.util.ArrayList;
-
 /**
  * Created by Kasia on 2016-11-29.
  */
@@ -9,7 +7,7 @@ public class Board {
 
     private PlayerColor[][] board = new PlayerColor[19][19];
 
-    public void analizeTurn(Turn turn){
+    public void analyzeTurn(Turn turn){
         updateBoard(turn);
     }
 

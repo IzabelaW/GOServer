@@ -38,7 +38,7 @@ public class Room implements IPlayerMadeGameDecisionListener {
 
         ArrayList<String> updatedBoard = boardToString(board.getBoard());
 
-        board.analizeTurn(turn);
+        board.analyzeTurn(turn);
 
         player.sendUpdatedBoard(updatedBoard);
         player.getOpponent().sendUpdatedBoard(updatedBoard);
