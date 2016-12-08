@@ -7,6 +7,10 @@ public class Board {
 
     private PlayerColor[][] board = new PlayerColor[19][19];
 
+    public Board(){
+        initalizeBoard(board);
+    }
+
     public void analyzeTurn(Turn turn){
         updateBoard(turn);
     }
@@ -21,6 +25,15 @@ public class Board {
     public PlayerColor[][] getBoard(){
         return board;
     }
+
+    private void initalizeBoard(PlayerColor[][] board){
+        for (int i = 0; i < 19; i ++){
+            for (int j = 0; j < 19; j++){
+                board[i][j] = PlayerColor.FREE;
+            }
+        }
+    }
+
 
 
 }

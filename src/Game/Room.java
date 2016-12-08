@@ -65,20 +65,12 @@ public class Room implements IPlayerMadeGameDecisionListener {
         return index;
     }
 
-    @Override
-    public String toString(){
-        if (joiner != null)
-            return index + " " + initiator.getLogin().toString() + " " + joiner.getLogin().toString();
-        else
-            return index + " " + initiator.getLogin().toString() + " " + "-";
-    }
-
     private ArrayList<String> boardToString(PlayerColor[][] board){
         ArrayList<String> updatedBoard = new ArrayList<>();
 
         for (int i = 0; i < 19; i++){
             for (int j = 0; j < 19; j++){
-                updatedBoard.add("" + board[i][j]);
+                updatedBoard.add(board[i][j].toString());
             }
         }
 
