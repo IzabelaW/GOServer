@@ -29,14 +29,6 @@ public class Room implements IPlayerMadeGameDecisionListener {
         this.joiner = joiner;
     }
 
-    public void turnForPlayer(IPlayer player){
-        try {
-            player.makeGameDecision(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void playerMadeTurn(IPlayer player, Turn turn){
         //odebranie odpowiedzi od playera, ktory initiator wykonal ruch i jaki
@@ -49,7 +41,11 @@ public class Room implements IPlayerMadeGameDecisionListener {
         player.sendUpdatedBoard(updatedBoard);
         player.getOpponent().sendUpdatedBoard(updatedBoard);
 
-        turnForPlayer(player.getOpponent());
+        try {
+            player.getOpponent().makeGameDecision(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -77,5 +73,3 @@ public class Room implements IPlayerMadeGameDecisionListener {
         return updatedBoard;
     }
 }
-
-

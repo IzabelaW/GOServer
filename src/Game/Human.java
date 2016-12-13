@@ -1,6 +1,6 @@
 package Game;
 
-import Listeners.IHumanStartedGameListener;
+import Listeners.IGameView;
 import Listeners.IPlayerMadeGameDecisionListener;
 
 import java.io.BufferedReader;
@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class which represents Human in Server.
@@ -56,14 +56,30 @@ public class Human extends Thread implements IPlayer {
      */
     public boolean ifOpponentPassed = false;
 
+    IGameView view;
+
 
     public Human(Socket socket) {
         this.socket = socket;
         try {
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        catch (IOException e){
+    }
+
+    public void attachView(IGameView view) {
+        this.view = view;
+    }
+
+    @Override
+    public void run() {
+        super.run();
+        try {
+            logIn();
+            chooseOpponent();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -72,39 +88,38 @@ public class Human extends Thread implements IPlayer {
      * Sends to the particular client information about possibility of making turn,
      * then receives information about turn making by this client and delegates it
      * to the on of listeners of human
+     *
      * @param listener of making turns by human
      */
     @Override
-    public void makeGameDecision(IPlayerMadeGameDecisionListener listener) throws IOException{
+    public void makeGameDecision(IPlayerMadeGameDecisionListener listener) throws IOException {
 
-        try{
+        try {
             out.println("MAKE_TURN");
 
             String response = in.readLine();
 
-            if(response.startsWith("TURN")) {
+            if (response.startsWith("TURN")) {
 
                 String[] move = response.split(" ");
                 Turn turn = new Turn(Integer.parseInt(move[1]), Integer.parseInt(move[2]), playerColor);
                 listener.playerMadeTurn(this, turn);
 
-            } else if (response.equals("PASS")){
+            } else if (response.equals("PASS")) {
 
-                if(ifOpponentPassed){
-                       listener.playersPassed();
-                }
-                else {
+                if (ifOpponentPassed) {
+                    listener.playersPassed();
+                } else {
                     opponent.opponentPassed();
                     opponent.makeGameDecision(listener);
                     return;
                 }
-            }
-            else if (response.equals("WANNA_GIVE_UP")){
+            } else if (response.equals("WANNA_GIVE_UP")) {
                 opponent.opponentGaveUp();
                 disconnectPlayer();
             }
 
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -112,54 +127,70 @@ public class Human extends Thread implements IPlayer {
 
     /**
      * Receives login from the particular client and delegates it to the one of listeners of Human.
-     * @param listener of initial part of game.
      */
-    public void logIn(IHumanStartedGameListener listener) throws IOException {
+    private void logIn() throws IOException {
 
         String response = in.readLine();
-        Login login = new Login(response);
-        listener.humanLogged(this, login);
+        login = new Login(response);
 
     }
 
     /**
      * Receives response from the particular client about type of opponent and delegates it to
      * the one of listeners of Human.
-     * @param listener of initial part of game.
      */
-    public void chooseOpponent(IHumanStartedGameListener listener) throws IOException{
+    public void chooseOpponent() throws IOException {
 
         String response = in.readLine();
-        listener.humanChoseOpponent(this,response);
+
+        if (response.equals("BOT")) {
+            Bot bot = new Bot();
+            Room room = new Room(this);
+            room.setJoiner(bot);
+
+            view.onCreateNewRoom(room);
+        } else if (response.equals("HUMAN")) {
+            sendLists(view.getListOfIndexesToString());
+            sendLists(view.getListOfInitiatorsLoginsToString());
+            sendLists(view.getListOfJoinersLoginsToString());//sends the list of rooms to the particular human to show him it
+            decideIfNewRoom();
+        }
 
     }
 
     /**
      * Receives response from the particular client about whether he wants to play in new room or create new one
      * and delegates it to the one of listeners of Human.
-     * @param listener of initial part of game.
      */
-    public void decideIfNewRoom(IHumanStartedGameListener listener) throws IOException{
+    public void decideIfNewRoom() throws IOException {
 
         String response = in.readLine();
-        listener.humanDecidedIfNewRoom(this,response);
+        if (response.equals("NEW")) {
+            Room room = new Room(this);
+            view.onCreateNewRoom(room);
+            setIndexOfRoom(room.getIndex());
+            setPlayerColor(PlayerColor.WHITE);
+        } else if (response.equals("EXISTING")) {
+            chooseRoom();
+        }
 
     }
 
     /**
      * Receives response from the particular client which involves information about existing room he chose
      * and delegates it to the one of listeners of Human.
-     * @param listener of initial part of game.
      */
-    public void chooseRoom(IHumanStartedGameListener listener) throws IOException{
+    public void chooseRoom() throws IOException {
 
         String response = in.readLine();
-        listener.humanChoseRoom(this, Integer.parseInt(response));
-
+        int numberOfRoom = Integer.parseInt(response);
+        Room room = view.onJoinHumanToRoom(numberOfRoom, this);
+        makeGameDecision(room);
     }
 
     /**
      * Sets the login.
+     *
      * @param login
      */
     public void setLogin(Login login) {
@@ -168,6 +199,7 @@ public class Human extends Thread implements IPlayer {
 
     /**
      * Gets the login.
+     *
      * @return login.
      */
     public Login getLogin() {
@@ -176,18 +208,25 @@ public class Human extends Thread implements IPlayer {
 
     /**
      * Sets the index of room Human plays in.
+     *
      * @param index of room.
      */
-    public void setIndexOfRoom(int index){ indexOfRoom = index;}
+    public void setIndexOfRoom(int index) {
+        indexOfRoom = index;
+    }
 
     /**
      * Gets the index of room Human plays in.
+     *
      * @return index of room.
      */
-    public int getIndexOfRoom(){ return indexOfRoom; }
+    public int getIndexOfRoom() {
+        return indexOfRoom;
+    }
 
     /**
      * Sets color of player's stones.
+     *
      * @param playerColor - color of player's stones.
      */
     public void setPlayerColor(PlayerColor playerColor) {
@@ -196,14 +235,16 @@ public class Human extends Thread implements IPlayer {
 
     /**
      * Gets color of player's stones.
+     *
      * @return color of player's stones.
      */
-    public PlayerColor getPlayerColor(){
+    public PlayerColor getPlayerColor() {
         return playerColor;
     }
 
     /**
      * Sets opponent of the player.
+     *
      * @param opponent - opponent of the player.
      */
     public void setOpponent(IPlayer opponent) {
@@ -212,6 +253,7 @@ public class Human extends Thread implements IPlayer {
 
     /**
      * Gets opponent of the player.
+     *
      * @return opponent of the player.
      */
     public IPlayer getOpponent() {
@@ -220,39 +262,42 @@ public class Human extends Thread implements IPlayer {
 
     /**
      * Sends list of rooms to the particular client
+     *
      * @param rooms - list of rooms
      */
-    public void sendLists(ArrayList<String> rooms){
+    public void sendLists(List<String> rooms) {
         out.println(rooms);
     }
 
     /**
      * Sends table of updated fields on the board.
+     *
      * @param updatedBoard - updated board.
      */
-    public void sendUpdatedBoard(ArrayList<String> updatedBoard) { out.println("UPDATED_BOARD " + updatedBoard);}
+    public void sendUpdatedBoard(ArrayList<String> updatedBoard) {
+        out.println("UPDATED_BOARD " + updatedBoard);
+    }
 
     /**
      * Sends message to player when his opponent has just passed.
      */
     public void opponentPassed() {
-        ifOpponentPassed=true;
+        ifOpponentPassed = true;
         out.println("OPPONENT_PASSED");
     }
 
     /**
      * Sends message to player when his opponent has just gave up.
      */
-    public void opponentGaveUp(){
+    public void opponentGaveUp() {
         out.println("OPPONENT_GAVE_UP");
     }
 
 
-    public void disconnectPlayer(){
+    public void disconnectPlayer() {
         try {
             socket.close();
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
