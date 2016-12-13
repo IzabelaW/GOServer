@@ -110,12 +110,12 @@ public class Human extends Thread implements IPlayer {
                 if (ifOpponentPassed) {
                     listener.playersPassed();
                 } else {
-                    opponent.opponentPassed();
+                    opponent.sendInfoOpponentPassed();
                     opponent.makeGameDecision(listener);
                     return;
                 }
             } else if (response.equals("WANNA_GIVE_UP")) {
-                opponent.opponentGaveUp();
+                opponent.sendInfoOpponentGaveUp();
                 disconnectPlayer();
             }
 
@@ -281,7 +281,7 @@ public class Human extends Thread implements IPlayer {
     /**
      * Sends message to player when his opponent has just passed.
      */
-    public void opponentPassed() {
+    public void sendInfoOpponentPassed() {
         ifOpponentPassed = true;
         out.println("OPPONENT_PASSED");
     }
@@ -289,9 +289,29 @@ public class Human extends Thread implements IPlayer {
     /**
      * Sends message to player when his opponent has just gave up.
      */
-    public void opponentGaveUp() {
+    public void sendInfoOpponentGaveUp() {
         out.println("OPPONENT_GAVE_UP");
     }
+
+    /**
+     * Sends info that player made legal move.
+     */
+    public void sendInfoLegalMove() { out.println("LEGAL_MOVE"); }
+
+    /**
+     * Sends info that player made illegal move - KO.
+     */
+    public void sendInfoIllegalMoveKO() { out.println("KO"); }
+
+    /**
+     * Sends info that player made illegal move - Suicide.
+     */
+    public void sendInfoIllegalMoveSuicide() { out.println("SUICIDE"); }
+
+    /**
+     * Sends info that player made illegal move - Occupied Field.
+     */
+    public void sendInfoIllegalMoveOccupiedField() { out.println("OCCUPIED_FIELD"); }
 
 
     public void disconnectPlayer() {

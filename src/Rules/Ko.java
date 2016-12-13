@@ -1,5 +1,6 @@
 package Rules;
 
+import Game.Board;
 import Game.PlayerColor;
 import Game.Turn;
 
@@ -19,9 +20,15 @@ public class Ko implements Rule {
     }
     @Override
     public boolean check(PlayerColor[][] board, Turn turn) {
-        PlayerColor[][] tmp;
-        tmp = Arrays.copyOf(board, board.length);
-        tmp[turn.getX()][turn.getY()] = board[turn.getX()][turn.getY()];
+        PlayerColor[][] tmp = new PlayerColor[19][19];
+
+        for(int i = 0; i < 19; i++) {
+            for (int j = 0; j < 19; j++) {
+                tmp[i][j] = board[i][j];
+            }
+        }
+
+        tmp[turn.getX()][turn.getY()] = turn.getPlayerColor();
 
         if (turn.getPlayerColor().equals(PlayerColor.BLACK)) {
             boolean equals = Arrays.deepEquals(tmp, turnsOfBlack);

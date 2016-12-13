@@ -18,10 +18,18 @@ public interface IPlayer {
 
     void setOpponent(IPlayer opponent);
 
-    void opponentPassed();
+    void sendInfoOpponentPassed();
 
-    void opponentGaveUp();
+    void sendInfoOpponentGaveUp();
 
     void sendUpdatedBoard(ArrayList<String> updatedBoard);
+
+    void sendInfoIllegalMoveKO();
+
+    void sendInfoIllegalMoveSuicide();
+
+    void sendInfoIllegalMoveOccupiedField();
+
+    void sendInfoLegalMove();
 
 }

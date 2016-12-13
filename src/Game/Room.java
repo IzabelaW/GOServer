@@ -1,6 +1,11 @@
 package Game;
 
 import Listeners.IPlayerMadeGameDecisionListener;
+import Rules.Ko;
+import Rules.OccupiedField;
+import Rules.Rule;
+import Rules.Suicide;
+import sun.nio.cs.KOI8_R;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,20 +36,47 @@ public class Room implements IPlayerMadeGameDecisionListener {
 
     @Override
     public void playerMadeTurn(IPlayer player, Turn turn){
-        //odebranie odpowiedzi od playera, ktory initiator wykonal ruch i jaki
 
-        board.analyzeTurn(turn);
+        Rule rule = board.analyzeTurn(turn);
 
-        ArrayList<String> updatedBoard = boardToString(board.getBoard());
+        if (rule instanceof OccupiedField){
+            player.sendInfoIllegalMoveOccupiedField();
+            try {
+                player.makeGameDecision(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else if (rule instanceof Suicide){
+            player.sendInfoIllegalMoveSuicide();
+            try {
+                player.makeGameDecision(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else if (rule instanceof Ko){
+            player.sendInfoIllegalMoveKO();
+            try {
+                player.makeGameDecision(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
 
+            ArrayList<String> updatedBoard = boardToString(board.getBoard());
 
-        player.sendUpdatedBoard(updatedBoard);
-        player.getOpponent().sendUpdatedBoard(updatedBoard);
+            player.sendInfoLegalMove();
+            player.sendUpdatedBoard(updatedBoard);
+            player.getOpponent().sendUpdatedBoard(updatedBoard);
 
-        try {
-            player.getOpponent().makeGameDecision(this);
-        } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                player.getOpponent().makeGameDecision(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 

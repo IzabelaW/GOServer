@@ -30,17 +30,37 @@ public class Bot extends Thread implements IPlayer {
     }
 
     @Override
-    public void opponentPassed() {
+    public void sendInfoOpponentPassed() {
 
     }
 
     @Override
-    public void opponentGaveUp() {
+    public void sendInfoOpponentGaveUp() {
 
     }
 
     @Override
     public void sendUpdatedBoard(ArrayList<String> updatedBoard) {
+
+    }
+
+    @Override
+    public void sendInfoIllegalMoveKO() {
+
+    }
+
+    @Override
+    public void sendInfoIllegalMoveSuicide() {
+
+    }
+
+    @Override
+    public void sendInfoIllegalMoveOccupiedField() {
+
+    }
+
+    @Override
+    public void sendInfoLegalMove() {
 
     }
 
