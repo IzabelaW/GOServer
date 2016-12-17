@@ -5,7 +5,6 @@ import Rules.Ko;
 import Rules.OccupiedField;
 import Rules.Rule;
 import Rules.Suicide;
-import sun.nio.cs.KOI8_R;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +17,7 @@ public class Room implements IPlayerMadeGameDecisionListener {
     private IPlayer initiator;
     private IPlayer joiner;
     private int index;
+
 
     public Room(IPlayer initiator){
         this.initiator = initiator;
@@ -70,6 +70,10 @@ public class Room implements IPlayerMadeGameDecisionListener {
             player.sendInfoLegalMove();
             player.sendUpdatedBoard(updatedBoard);
             player.getOpponent().sendUpdatedBoard(updatedBoard);
+            player.sendInfoCapturedStones(Integer.toString(board.getCapturedForWhite()),
+                    Integer.toString(board.getCapturedForBlack()));
+            player.getOpponent().sendInfoCapturedStones(Integer.toString(board.getCapturedForWhite()),
+                    Integer.toString(board.getCapturedForBlack()));
 
             try {
                 player.getOpponent().makeGameDecision(this);
@@ -78,11 +82,6 @@ public class Room implements IPlayerMadeGameDecisionListener {
             }
 
         }
-    }
-
-    @Override
-    public void playersPassed() {
-
     }
 
     public void setIndex(int index) {

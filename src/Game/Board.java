@@ -15,6 +15,8 @@ public class Board {
     private PlayerColor[][] board;
     private int[][] stonesToRemove;
     private int[][] tmp;
+    private int capturedForWhite;
+    private int capturedForBlack;
 
 
     public Board() {
@@ -48,8 +50,8 @@ public class Board {
         int y = turn.getY();
         PlayerColor playerColor = turn.getPlayerColor();
         board[x][y] = playerColor;
-
         checkMove(x, y, playerColor);
+        countCaptured(turn.getPlayerColor());
         removeStones();
         clearTables();
     }
@@ -160,6 +162,21 @@ public class Board {
         }
     }
 
+    public void countCaptured(PlayerColor playerColor){
+        for (int i = 0; i < 19; i++) {
+            for (int j = 0; j < 19; j++) {
+                if (stonesToRemove[i][j] == 1) {
+                    if(playerColor.equals(PlayerColor.WHITE))
+                        capturedForWhite++;
+                    else if(playerColor.equals(PlayerColor.BLACK))
+                        capturedForBlack++;
+
+                }
+            }
+        }
+
+    }
+
     private void clearTables() {
         for (int i = 0; i < 19; i++) {
             for (int j = 0; j < 19; j++) {
@@ -178,5 +195,13 @@ public class Board {
             }
         }
         return false;
+    }
+
+    public int getCapturedForWhite(){
+        return capturedForWhite;
+    }
+
+    public int getCapturedForBlack(){
+        return capturedForBlack;
     }
 }

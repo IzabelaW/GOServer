@@ -68,4 +68,17 @@ public class Bot extends Thread implements IPlayer {
     public void setOpponent(IPlayer opponent) {
 
     }
+
+    @Override
+    public void sendMyLogin() {
+
+    }
+
+    public void sendInfoCapturedStones(String capturedForWhite, String capturedForBlack){}
+
+    public void sendInfoMarkDeadStones(){}
+
+    public void setIfOpponentPassed(boolean ifPassed){}
+
+    public void sendInfo(String info){}
 }

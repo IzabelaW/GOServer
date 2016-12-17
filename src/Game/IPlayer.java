@@ -18,6 +18,8 @@ public interface IPlayer {
 
     void setOpponent(IPlayer opponent);
 
+    void sendMyLogin();
+
     void sendInfoOpponentPassed();
 
     void sendInfoOpponentGaveUp();
@@ -31,5 +33,13 @@ public interface IPlayer {
     void sendInfoIllegalMoveOccupiedField();
 
     void sendInfoLegalMove();
+
+    void sendInfoCapturedStones(String capturedForWhite, String capturedForBlack);
+
+    void sendInfoMarkDeadStones();
+
+    void setIfOpponentPassed(boolean ifPassed);
+
+    void sendInfo(String info);
 
 }

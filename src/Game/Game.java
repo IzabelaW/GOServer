@@ -28,7 +28,7 @@ public class Game implements IGameView {
      */
     public void startGame() throws IOException {
 
-        ServerSocket listener = new ServerSocket(8900);
+        ServerSocket listener = new ServerSocket(8901);
 
         try {
             while (true) {

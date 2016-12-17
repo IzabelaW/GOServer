@@ -56,6 +56,8 @@ public class Human extends Thread implements IPlayer {
      */
     public boolean ifOpponentPassed = false;
 
+    public boolean summary = false;
+
     IGameView view;
 
 
@@ -108,7 +110,14 @@ public class Human extends Thread implements IPlayer {
             } else if (response.equals("PASS")) {
 
                 if (ifOpponentPassed) {
-                    listener.playersPassed();
+                    summary = true;
+                    sendInfoWaitForOpponentToMarkDeadStones();
+                    opponent.sendInfoMarkDeadStones();
+                    //while(summary){
+                    //    summaryCommunication();
+                    //}
+                    ifOpponentPassed=false;
+
                 } else {
                     opponent.sendInfoOpponentPassed();
                     opponent.makeGameDecision(listener);
@@ -122,6 +131,16 @@ public class Human extends Thread implements IPlayer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+
+    private void summaryCommunication() throws IOException {
+        String response = in.readLine();
+        if(response.equals("RESUME_GAME")){
+            summary = false;
+        }
+        opponent.sendInfo(response);
+
 
     }
 
@@ -185,6 +204,7 @@ public class Human extends Thread implements IPlayer {
         String response = in.readLine();
         int numberOfRoom = Integer.parseInt(response);
         Room room = view.onJoinHumanToRoom(numberOfRoom, this);
+        opponent.sendMyLogin();
         makeGameDecision(room);
     }
 
@@ -260,6 +280,17 @@ public class Human extends Thread implements IPlayer {
         return opponent;
     }
 
+    public void setIfOpponentPassed(boolean ifPassed){
+        ifOpponentPassed = ifPassed;
+    }
+
+    /**
+     * Sends login.
+     */
+    public void sendMyLogin(){
+        out.println("LOGIN: " + opponent.getLogin().toString());
+    }
+
     /**
      * Sends list of rooms to the particular client
      *
@@ -296,7 +327,9 @@ public class Human extends Thread implements IPlayer {
     /**
      * Sends info that player made legal move.
      */
-    public void sendInfoLegalMove() { out.println("LEGAL_MOVE"); }
+    public void sendInfoLegalMove() {
+        opponent.setIfOpponentPassed(false);
+        out.println("LEGAL_MOVE"); }
 
     /**
      * Sends info that player made illegal move - KO.
@@ -312,6 +345,22 @@ public class Human extends Thread implements IPlayer {
      * Sends info that player made illegal move - Occupied Field.
      */
     public void sendInfoIllegalMoveOccupiedField() { out.println("OCCUPIED_FIELD"); }
+
+    public void sendInfoCapturedStones(String capturedForWhite, String capturedForBlack){
+        out.println("CAPTURED " + capturedForWhite + "," + capturedForBlack);
+    }
+
+    private void sendInfoWaitForOpponentToMarkDeadStones(){
+        out.println("WAIT_FOR_MARKING_DEAD");
+    }
+
+    public void sendInfoMarkDeadStones(){
+        out.println("MARK_DEAD");
+    }
+
+    public void sendInfo(String info){
+        out.println(info);
+    }
 
 
     public void disconnectPlayer() {
