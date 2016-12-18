@@ -113,9 +113,10 @@ public class Human extends Thread implements IPlayer {
                     summary = true;
                     sendInfoWaitForOpponentToMarkDeadStones();
                     opponent.sendInfoMarkDeadStones();
-                    //while(summary){
-                    //    summaryCommunication();
-                    //}
+                    while(summary){
+                        opponent.summaryCommunication();
+                      summaryCommunication();
+                    }
                     ifOpponentPassed=false;
 
                 } else {
@@ -134,7 +135,7 @@ public class Human extends Thread implements IPlayer {
 
     }
 
-    private void summaryCommunication() throws IOException {
+    public void summaryCommunication() throws IOException {
         String response = in.readLine();
         if(response.equals("RESUME_GAME")){
             summary = false;

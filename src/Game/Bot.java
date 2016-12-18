@@ -81,4 +81,6 @@ public class Bot extends Thread implements IPlayer {
     public void setIfOpponentPassed(boolean ifPassed){}
 
     public void sendInfo(String info){}
+
+    public void summaryCommunication(){}
 }

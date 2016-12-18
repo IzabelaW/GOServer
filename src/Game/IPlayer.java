@@ -42,4 +42,6 @@ public interface IPlayer {
 
     void sendInfo(String info);
 
+    void summaryCommunication() throws IOException;
+
 }
