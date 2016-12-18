@@ -2,6 +2,7 @@ package Game;
 
 import Listeners.IPlayerMadeGameDecisionListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -82,5 +83,8 @@ public class Bot extends Thread implements IPlayer {
 
     public void sendInfo(String info){}
 
-    public void summaryCommunication(){}
+    @Override
+    public void communicate() throws IOException {
+
+    }
 }

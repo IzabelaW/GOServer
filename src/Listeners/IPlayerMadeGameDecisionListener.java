@@ -10,5 +10,4 @@ public interface IPlayerMadeGameDecisionListener {
 
     void playerMadeTurn(IPlayer player, Turn turn);
 
-
 }

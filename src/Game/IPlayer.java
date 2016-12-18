@@ -1,6 +1,7 @@
 package Game;
 
 import Listeners.IPlayerMadeGameDecisionListener;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,6 +43,6 @@ public interface IPlayer {
 
     void sendInfo(String info);
 
-    void summaryCommunication() throws IOException;
+    void communicate() throws IOException;
 
 }

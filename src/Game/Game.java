@@ -3,6 +3,7 @@ package Game;
 import Listeners.IGameView;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,8 @@ public class Game implements IGameView {
      */
     public void startGame() throws IOException {
 
-        ServerSocket listener = new ServerSocket(8901);
+        InetAddress addr = InetAddress.getByName("78.8.246.0");
+        ServerSocket listener = new ServerSocket(8001,50,addr);
 
         try {
             while (true) {

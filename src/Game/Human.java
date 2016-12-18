@@ -56,8 +56,6 @@ public class Human extends Thread implements IPlayer {
      */
     public boolean ifOpponentPassed = false;
 
-    public boolean summary = false;
-
     IGameView view;
 
 
@@ -110,13 +108,9 @@ public class Human extends Thread implements IPlayer {
             } else if (response.equals("PASS")) {
 
                 if (ifOpponentPassed) {
-                    summary = true;
                     sendInfoWaitForOpponentToMarkDeadStones();
                     opponent.sendInfoMarkDeadStones();
-                    while(summary){
-                        opponent.summaryCommunication();
-                      summaryCommunication();
-                    }
+                    opponent.communicate();
                     ifOpponentPassed=false;
 
                 } else {
@@ -135,15 +129,14 @@ public class Human extends Thread implements IPlayer {
 
     }
 
-    public void summaryCommunication() throws IOException {
+    public void communicate() throws IOException{
         String response = in.readLine();
-        if(response.equals("RESUME_GAME")){
-            summary = false;
-        }
+        System.out.println(response);
         opponent.sendInfo(response);
-
-
+        opponent.communicate();
     }
+
+
 
     /**
      * Receives login from the particular client and delegates it to the one of listeners of Human.
