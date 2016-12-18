@@ -43,6 +43,6 @@ public interface IPlayer {
 
     void sendInfo(String info);
 
-    void communicate() throws IOException;
+    void sumUp() throws IOException;
 
 }

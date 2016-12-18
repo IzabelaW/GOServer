@@ -29,8 +29,8 @@ public class Game implements IGameView {
      */
     public void startGame() throws IOException {
 
-        InetAddress addr = InetAddress.getByName("78.8.246.0");
-        ServerSocket listener = new ServerSocket(8001,50,addr);
+        InetAddress addr = InetAddress.getByName("192.168.1.4");
+        ServerSocket listener = new ServerSocket(8901,50,addr);
 
         try {
             while (true) {

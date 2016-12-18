@@ -84,7 +84,7 @@ public class Bot extends Thread implements IPlayer {
     public void sendInfo(String info){}
 
     @Override
-    public void communicate() throws IOException {
+    public void sumUp() throws IOException {
 
     }
 }

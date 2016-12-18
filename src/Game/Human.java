@@ -110,7 +110,7 @@ public class Human extends Thread implements IPlayer {
                 if (ifOpponentPassed) {
                     sendInfoWaitForOpponentToMarkDeadStones();
                     opponent.sendInfoMarkDeadStones();
-                    opponent.communicate();
+                    opponent.sumUp();
                     ifOpponentPassed=false;
 
                 } else {
@@ -129,11 +129,10 @@ public class Human extends Thread implements IPlayer {
 
     }
 
-    public void communicate() throws IOException{
+    public void sumUp() throws IOException{
         String response = in.readLine();
-        System.out.println(response);
         opponent.sendInfo(response);
-        opponent.communicate();
+        opponent.sumUp();
     }
 
 
