@@ -1,5 +1,6 @@
 package Game;
 
+import GameSummary.AreaMarker;
 import Listeners.IPlayerMadeGameDecisionListener;
 
 import java.io.IOException;
@@ -84,7 +85,17 @@ public class Bot extends Thread implements IPlayer {
     public void sendInfo(String info){}
 
     @Override
-    public void sumUp() throws IOException {
+    public void sumUp(IPlayerMadeGameDecisionListener listener) throws IOException {
+
+    }
+
+    @Override
+    public void markArea() throws IOException {
+
+    }
+
+    @Override
+    public void setAreaMarker(AreaMarker areaMarker) {
 
     }
 }

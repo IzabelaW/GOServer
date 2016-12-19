@@ -130,6 +130,10 @@ public class Board {
         return board;
     }
 
+    public void setBoard(PlayerColor[][] board) {
+        this.board = board;
+    }
+
     private void initializeBoard(PlayerColor[][] board) {
         for (int i = 0; i < 19; i++) {
             for (int j = 0; j < 19; j++) {

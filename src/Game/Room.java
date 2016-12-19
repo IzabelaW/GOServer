@@ -1,5 +1,6 @@
 package Game;
 
+import GameSummary.AreaMarker;
 import Listeners.IPlayerMadeGameDecisionListener;
 import Rules.Ko;
 import Rules.OccupiedField;
@@ -18,10 +19,17 @@ public class Room implements IPlayerMadeGameDecisionListener {
     private IPlayer joiner;
     private int index;
 
+    /**
+     * Object which marks area of the player.
+     */
+    private AreaMarker areaMarker;
+
 
     public Room(IPlayer initiator){
         this.initiator = initiator;
         board = new Board();
+        areaMarker = new AreaMarker(board);
+        initiator.setAreaMarker(areaMarker);
     }
 
     public IPlayer getInitiator() {
@@ -32,6 +40,7 @@ public class Room implements IPlayerMadeGameDecisionListener {
 
     public void setJoiner(IPlayer joiner){
         this.joiner = joiner;
+        joiner.setAreaMarker(areaMarker);
     }
 
     @Override
@@ -102,5 +111,26 @@ public class Room implements IPlayerMadeGameDecisionListener {
         }
 
         return updatedBoard;
+    }
+
+    public void updateBoard(String response){
+        PlayerColor [][] updatedBoard = new PlayerColor[19][19];
+
+        String response1 = response.replace("MARK_AREA [","");
+        String board[] = response1.replace("]","").split(", ");
+
+        for(int i = 0; i < 19; i++){
+            for(int j = 0; j < 19; j++){
+                if(board[(i*18)+i+j].equals("BLACK"))
+                    updatedBoard[i][j] = PlayerColor.BLACK;
+                else if(board[(i*18)+i+j].equals("WHITE"))
+                    updatedBoard[i][j] = PlayerColor.WHITE;
+                else if(board[(i*18)+i+j].equals("FREE"))
+                    updatedBoard[i][j] = PlayerColor.FREE;
+            }
+        }
+
+        this.board.setBoard(updatedBoard);
+
     }
 }

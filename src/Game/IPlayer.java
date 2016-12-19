@@ -1,5 +1,6 @@
 package Game;
 
+import GameSummary.AreaMarker;
 import Listeners.IPlayerMadeGameDecisionListener;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
@@ -43,6 +44,10 @@ public interface IPlayer {
 
     void sendInfo(String info);
 
-    void sumUp() throws IOException;
+    void sumUp(IPlayerMadeGameDecisionListener listener) throws IOException;
+
+    void markArea() throws IOException;
+
+    void setAreaMarker(AreaMarker areaMarker);
 
 }

@@ -1,5 +1,6 @@
 package Game;
 
+import GameSummary.AreaMarker;
 import Listeners.IGameView;
 import Listeners.IPlayerMadeGameDecisionListener;
 
@@ -54,7 +55,12 @@ public class Human extends Thread implements IPlayer {
     /**
      * Statement if one of players passed.
      */
-    public boolean ifOpponentPassed = false;
+    private boolean ifOpponentPassed = false;
+
+    /**
+     * Object which marks area of the player.
+     */
+    private AreaMarker areaMarker;
 
     IGameView view;
 
@@ -110,13 +116,12 @@ public class Human extends Thread implements IPlayer {
                 if (ifOpponentPassed) {
                     sendInfoWaitForOpponentToMarkDeadStones();
                     opponent.sendInfoMarkDeadStones();
-                    opponent.sumUp();
+                    opponent.sumUp(listener);
                     ifOpponentPassed=false;
 
                 } else {
                     opponent.sendInfoOpponentPassed();
                     opponent.makeGameDecision(listener);
-                    return;
                 }
             } else if (response.equals("WANNA_GIVE_UP")) {
                 opponent.sendInfoOpponentGaveUp();
@@ -129,10 +134,37 @@ public class Human extends Thread implements IPlayer {
 
     }
 
-    public void sumUp() throws IOException{
+    public void sumUp(IPlayerMadeGameDecisionListener listener) throws IOException{
         String response = in.readLine();
         opponent.sendInfo(response);
-        opponent.sumUp();
+        if(!response.startsWith("MARK_AREA "))
+            opponent.sumUp(listener);
+        else {
+            listener.updateBoard(response);
+            opponent.markArea();
+        }
+    }
+
+    public void markArea() throws IOException{
+        String response = in.readLine();
+        while (response.startsWith("AREA: ")){
+            String [] coordinates = response.split(" ");
+            ArrayList<String> stringMarkedArea = areaMarker.markArea(Integer.parseInt(coordinates[1]),Integer.parseInt(coordinates[2]));
+            out.println("MARKED_AREA: " + stringMarkedArea);
+            response = in.readLine();
+            if(response.startsWith("FINAL_MARKED_AS_AREA: ")) {
+                opponent.sendInfo(response);
+                opponent.markArea();
+            }
+        }
+        if(response.equals("AREA_ACCEPTED")){
+            opponent.sendInfo(response);
+            markArea();
+
+        } else if (response.equals("AREA_NOT_ACCEPTED")){
+            opponent.sendInfo(response);
+            opponent.markArea();
+        }
     }
 
 
@@ -278,6 +310,12 @@ public class Human extends Thread implements IPlayer {
     }
 
     /**
+     * Sets areaMarker.
+     * @param areaMarker
+     */
+    public void setAreaMarker(AreaMarker areaMarker) { this.areaMarker = areaMarker; }
+
+    /**
      * Sends login.
      */
     public void sendMyLogin(){
@@ -354,7 +392,6 @@ public class Human extends Thread implements IPlayer {
     public void sendInfo(String info){
         out.println(info);
     }
-
 
     public void disconnectPlayer() {
         try {

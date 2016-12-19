@@ -19,5 +19,4 @@ public interface IGameView {
     List<String> getListOfInitiatorsLoginsToString();
 
     List<String> getListOfJoinersLoginsToString();
-
 }
