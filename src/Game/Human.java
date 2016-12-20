@@ -121,12 +121,14 @@ public class Human extends Thread implements IPlayer {
 
                 } else {
                     opponent.sendInfoOpponentPassed();
-                    try {
-                        opponent.makeGameDecision(listener);
-                    } catch (IOException e){
-                        opponent.sendInfo("OPPONENT_GAVE_UP");
-                        deleteRoom();
-                        disconnectPlayer();
+                    if(! (opponent instanceof Bot)) {
+                        try {
+                            opponent.makeGameDecision(listener);
+                        } catch (IOException e) {
+                            opponent.sendInfo("OPPONENT_GAVE_UP");
+                            deleteRoom();
+                            disconnectPlayer();
+                        }
                     }
                 }
             }
@@ -201,10 +203,12 @@ public class Human extends Thread implements IPlayer {
 
         if (response.equals("BOT")) {
             Bot bot = new Bot();
-            Room room = new Room(this);
-            room.setJoiner(bot);
-
+            Room room = new Room(bot);
             view.onCreateNewRoom(room);
+            view.onJoinHumanToRoom(room.getIndex()-1, this);
+            bot.sendMyLogin();
+            makeGameDecision(room);
+
         } else if (response.equals("HUMAN")) {
             sendLists(view.getListOfIndexesToString());
             sendLists(view.getListOfInitiatorsLoginsToString());
@@ -260,6 +264,7 @@ public class Human extends Thread implements IPlayer {
                 deleteRoom();
                 disconnectPlayer();
             }
+
             opponent.sendMyLogin();
             try {
                 makeGameDecision(room);
@@ -357,6 +362,7 @@ public class Human extends Thread implements IPlayer {
      * Sends login.
      */
     public void sendMyLogin(){
+
         out.println("LOGIN: " + opponent.getLogin().toString());
     }
 
