@@ -36,10 +36,6 @@ public class Bot extends Thread implements IPlayer {
 
     }
 
-    @Override
-    public void sendInfoOpponentGaveUp() {
-
-    }
 
     @Override
     public void sendUpdatedBoard(ArrayList<String> updatedBoard) {
@@ -90,12 +86,22 @@ public class Bot extends Thread implements IPlayer {
     }
 
     @Override
-    public void markArea() throws IOException {
+    public void markArea(IPlayerMadeGameDecisionListener listener) throws IOException {
 
     }
 
     @Override
     public void setAreaMarker(AreaMarker areaMarker) {
+
+    }
+
+    @Override
+    public void disconnectPlayer() {
+
+    }
+
+    @Override
+    public void deleteRoom() {
 
     }
 }

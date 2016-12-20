@@ -53,7 +53,10 @@ public class Room implements IPlayerMadeGameDecisionListener {
             try {
                 player.makeGameDecision(this);
             } catch (IOException e) {
-                e.printStackTrace();
+                player.getOpponent().sendInfo("OPPONENT_GAVE_UP");
+                player.deleteRoom();
+                player.disconnectPlayer();
+
             }
         }
         else if (rule instanceof Suicide){
@@ -61,7 +64,9 @@ public class Room implements IPlayerMadeGameDecisionListener {
             try {
                 player.makeGameDecision(this);
             } catch (IOException e) {
-                e.printStackTrace();
+                player.getOpponent().sendInfo("OPPONENT_GAVE_UP");
+                player.deleteRoom();
+                player.disconnectPlayer();
             }
         }
         else if (rule instanceof Ko){
@@ -69,7 +74,9 @@ public class Room implements IPlayerMadeGameDecisionListener {
             try {
                 player.makeGameDecision(this);
             } catch (IOException e) {
-                e.printStackTrace();
+                player.getOpponent().sendInfo("OPPONENT_GAVE_UP");
+                player.deleteRoom();
+                player.disconnectPlayer();
             }
         }
         else {
@@ -87,7 +94,9 @@ public class Room implements IPlayerMadeGameDecisionListener {
             try {
                 player.getOpponent().makeGameDecision(this);
             } catch (IOException e) {
-                e.printStackTrace();
+                player.getOpponent().sendInfo("OPPONENT_GAVE_UP");
+                player.deleteRoom();
+                player.disconnectPlayer();
             }
 
         }

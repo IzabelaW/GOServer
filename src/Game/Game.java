@@ -30,7 +30,7 @@ public class Game implements IGameView {
     public void startGame() throws IOException {
 
         InetAddress addr = InetAddress.getByName("192.168.1.4");
-        ServerSocket listener = new ServerSocket(8902,50,addr);
+        ServerSocket listener = new ServerSocket(8900,50,addr);
 
         try {
             while (true) {
@@ -46,13 +46,26 @@ public class Game implements IGameView {
 
 
     @Override
-    public synchronized void onCreateNewRoom(Room room) {
-        rooms.add(room);
-        room.setIndex(rooms.indexOf(room));
+    public synchronized void onCreateNewRoom(Room room)  {
+        boolean ifNull = false;
+        for(Room r : rooms){
+            if(r==null){
+                ifNull = true;
+                int index = rooms.indexOf(r);
+                rooms.add(index, room);
+                room.setIndex(index);
+                break;
+            }
+
+        }
+        if(!ifNull) {
+            rooms.add(room);
+            room.setIndex(rooms.indexOf(room));
+        }
     }
 
     @Override
-    public synchronized Room onJoinHumanToRoom(int numberOfRoom, Human human) {
+    public synchronized Room onJoinHumanToRoom(int numberOfRoom, Human human) throws IOException {
         Room chosenRoom = rooms.get(numberOfRoom);
         chosenRoom.setJoiner(human);
         human.setIndexOfRoom(chosenRoom.getIndex());
@@ -70,7 +83,9 @@ public class Game implements IGameView {
     public synchronized List<String> getListOfIndexesToString(){
         List<String> stringListOfIndexes = new ArrayList<>();
         for (Room room : rooms){
-            stringListOfIndexes.add(Integer.toString(room.getIndex()));
+            if(room!=null) {
+                stringListOfIndexes.add(Integer.toString(room.getIndex()));
+            }
         }
 
         return stringListOfIndexes;
@@ -84,6 +99,7 @@ public class Game implements IGameView {
     public synchronized List<String> getListOfInitiatorsLoginsToString(){
         List<String> stringListOfPlayer1Logins = new ArrayList<>();
         for (Room room : rooms){
+            if(room!=null)
             stringListOfPlayer1Logins.add(room.getInitiator().getLogin().toString());
         }
 
@@ -98,12 +114,21 @@ public class Game implements IGameView {
     public synchronized List<String> getListOfJoinersLoginsToString(){
         List<String> stringListOfPlayer2Logins = new ArrayList<>();
         for (Room room : rooms){
-            if(room.getJoiner() != null)
-                stringListOfPlayer2Logins.add(room.getJoiner().getLogin().toString());
-            else
-                stringListOfPlayer2Logins.add("-");
+            if(room!=null) {
+                if (room.getJoiner() != null)
+                    stringListOfPlayer2Logins.add(room.getJoiner().getLogin().toString());
+                else
+                    stringListOfPlayer2Logins.add("-");
+            }
         }
 
         return stringListOfPlayer2Logins;
+    }
+
+    @Override
+    public void onDeleteRoom(int indexOfRoom) {
+        rooms.remove(indexOfRoom-1);
+        rooms.add(indexOfRoom-1, null);
+
     }
 }

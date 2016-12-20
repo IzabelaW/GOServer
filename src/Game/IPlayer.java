@@ -2,7 +2,6 @@ package Game;
 
 import GameSummary.AreaMarker;
 import Listeners.IPlayerMadeGameDecisionListener;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,8 +23,6 @@ public interface IPlayer {
 
     void sendInfoOpponentPassed();
 
-    void sendInfoOpponentGaveUp();
-
     void sendUpdatedBoard(ArrayList<String> updatedBoard);
 
     void sendInfoIllegalMoveKO();
@@ -38,7 +35,7 @@ public interface IPlayer {
 
     void sendInfoCapturedStones(String capturedForWhite, String capturedForBlack);
 
-    void sendInfoMarkDeadStones();
+    void sendInfoMarkDeadStones() throws IOException;
 
     void setIfOpponentPassed(boolean ifPassed);
 
@@ -46,8 +43,12 @@ public interface IPlayer {
 
     void sumUp(IPlayerMadeGameDecisionListener listener) throws IOException;
 
-    void markArea() throws IOException;
+    void markArea(IPlayerMadeGameDecisionListener listener) throws IOException;
 
     void setAreaMarker(AreaMarker areaMarker);
+
+    void disconnectPlayer();
+
+    void deleteRoom();
 
 }

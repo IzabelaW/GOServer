@@ -86,7 +86,7 @@ public class Human extends Thread implements IPlayer {
             logIn();
             chooseOpponent();
         } catch (IOException e) {
-            e.printStackTrace();
+            disconnectPlayer();
         }
     }
 
@@ -121,15 +121,20 @@ public class Human extends Thread implements IPlayer {
 
                 } else {
                     opponent.sendInfoOpponentPassed();
-                    opponent.makeGameDecision(listener);
+                    try {
+                        opponent.makeGameDecision(listener);
+                    } catch (IOException e){
+                        opponent.sendInfo("OPPONENT_GAVE_UP");
+                        deleteRoom();
+                        disconnectPlayer();
+                    }
                 }
-            } else if (response.equals("WANNA_GIVE_UP")) {
-                opponent.sendInfoOpponentGaveUp();
-                disconnectPlayer();
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            opponent.sendInfo("OPPONENT_GAVE_UP");
+            deleteRoom();
+            disconnectPlayer();
         }
 
     }
@@ -137,15 +142,18 @@ public class Human extends Thread implements IPlayer {
     public void sumUp(IPlayerMadeGameDecisionListener listener) throws IOException{
         String response = in.readLine();
         opponent.sendInfo(response);
-        if(!response.startsWith("MARK_AREA "))
+        if(!response.startsWith("MARK_AREA ") && !response.equals("RESUME"))
             opponent.sumUp(listener);
-        else {
+        else if(response.startsWith("MARK_AREA")){
             listener.updateBoard(response);
-            opponent.markArea();
+            opponent.markArea(listener);
+        }
+        else if(response.equals("RESUME")){
+            opponent.makeGameDecision(listener);
         }
     }
 
-    public void markArea() throws IOException{
+    public void markArea(IPlayerMadeGameDecisionListener listener) throws IOException{
         String response = in.readLine();
         while (response.startsWith("AREA: ")){
             String [] coordinates = response.split(" ");
@@ -154,16 +162,20 @@ public class Human extends Thread implements IPlayer {
             response = in.readLine();
             if(response.startsWith("FINAL_MARKED_AS_AREA: ")) {
                 opponent.sendInfo(response);
-                opponent.markArea();
+                opponent.markArea(listener);
             }
         }
         if(response.equals("AREA_ACCEPTED")){
             opponent.sendInfo(response);
-            markArea();
+            markArea(listener);
 
         } else if (response.equals("AREA_NOT_ACCEPTED")){
             opponent.sendInfo(response);
-            opponent.markArea();
+            opponent.markArea(listener);
+        }
+        else if(response.equals("RESUME")){
+            opponent.sendInfo(response);
+            opponent.makeGameDecision(listener);
         }
     }
 
@@ -214,8 +226,14 @@ public class Human extends Thread implements IPlayer {
             view.onCreateNewRoom(room);
             setIndexOfRoom(room.getIndex());
             setPlayerColor(PlayerColor.WHITE);
+
         } else if (response.equals("EXISTING")) {
             chooseRoom();
+        } else if(response.equals("REFRESH")){
+            sendLists(view.getListOfIndexesToString());
+            sendLists(view.getListOfInitiatorsLoginsToString());
+            sendLists(view.getListOfJoinersLoginsToString());//sends the list of rooms to the particular human to show him it
+            decideIfNewRoom();
         }
 
     }
@@ -225,12 +243,32 @@ public class Human extends Thread implements IPlayer {
      * and delegates it to the one of listeners of Human.
      */
     public void chooseRoom() throws IOException {
-
+        Room room = null;
         String response = in.readLine();
-        int numberOfRoom = Integer.parseInt(response);
-        Room room = view.onJoinHumanToRoom(numberOfRoom, this);
-        opponent.sendMyLogin();
-        makeGameDecision(room);
+        if(response.equals("REFRESH")){
+            sendLists(view.getListOfIndexesToString());
+            sendLists(view.getListOfInitiatorsLoginsToString());
+            sendLists(view.getListOfJoinersLoginsToString());//sends the list of rooms to the particular human to show him it
+            chooseRoom();
+        }
+        else {
+            int numberOfRoom = Integer.parseInt(response);
+            try {
+                room = view.onJoinHumanToRoom(numberOfRoom, this);
+            } catch (IOException e) {
+                opponent.sendInfo("OPPONENT_GAVE_UP");
+                deleteRoom();
+                disconnectPlayer();
+            }
+            opponent.sendMyLogin();
+            try {
+                makeGameDecision(room);
+            } catch (IOException e) {
+                opponent.sendInfo("OPPONENT_GAVE_UP");
+                deleteRoom();
+                disconnectPlayer();
+            }
+        }
     }
 
     /**
@@ -348,12 +386,6 @@ public class Human extends Thread implements IPlayer {
         out.println("OPPONENT_PASSED");
     }
 
-    /**
-     * Sends message to player when his opponent has just gave up.
-     */
-    public void sendInfoOpponentGaveUp() {
-        out.println("OPPONENT_GAVE_UP");
-    }
 
     /**
      * Sends info that player made legal move.
@@ -399,5 +431,9 @@ public class Human extends Thread implements IPlayer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void deleteRoom(){
+        view.onDeleteRoom(indexOfRoom);
     }
 }
