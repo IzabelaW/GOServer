@@ -161,6 +161,11 @@ public class Human extends Thread implements IPlayer {
 
     public void markArea(IPlayerMadeGameDecisionListener listener) throws IOException{
         String response = in.readLine();
+
+        if(response.startsWith("FINAL_MARKED_AS_AREA: ")) {
+            opponent.sendInfo(response);
+            opponent.markArea(listener);
+        }
         while (response.startsWith("AREA: ")){
             String [] coordinates = response.split(" ");
             ArrayList<String> stringMarkedArea = areaMarker.markArea(Integer.parseInt(coordinates[1]),Integer.parseInt(coordinates[2]));
