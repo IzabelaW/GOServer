@@ -132,6 +132,8 @@ public class Human extends Thread implements IPlayer {
                             deleteRoom();
                             disconnectPlayer();
                         }
+                    } else {
+                        sumUp(listener);
                     }
                 }
             }
@@ -146,7 +148,29 @@ public class Human extends Thread implements IPlayer {
 
     public void sumUp(IPlayerMadeGameDecisionListener listener) throws IOException{
         String response = in.readLine();
-        opponent.sendInfo(response);
+        if(response.startsWith("MARKED_AS_DEAD: ") && opponent instanceof Bot){
+            sendInfo("BOT_ACCEPTED_DEAD_STONES");
+            ArrayList<String> markedAreaReadyToSend = new ArrayList<>();
+            for(int i = 0; i < 19; i++){
+                for(int j = 0; j < 19; j++){
+                    ArrayList<String> singleMarkedArea = new ArrayList<>();
+                    singleMarkedArea = areaMarker.serwerMarkArea(i,j);
+                    if(singleMarkedArea != null) {
+                        for (String single : singleMarkedArea) {
+                            if (j == 0)
+                                markedAreaReadyToSend.add(single);
+                            else {
+                                if (single.equals("FREE"))
+                                    markedAreaReadyToSend.add(single);
+                            }
+                        }
+                    }
+                }
+            }
+            sendInfo("SERWER_MARKED_AREA: " + markedAreaReadyToSend);
+        } else {
+            opponent.sendInfo(response);
+        }
         if(!response.startsWith("MARK_AREA ") && !response.equals("RESUME"))
             opponent.sumUp(listener);
         else if(response.startsWith("MARK_AREA")){

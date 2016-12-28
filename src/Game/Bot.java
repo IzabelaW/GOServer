@@ -41,7 +41,7 @@ public class Bot extends BotProxy{
 
     @Override
     public Login getLogin() {
-        return null;
+        return login;
     }
 
     @Override
@@ -57,7 +57,6 @@ public class Bot extends BotProxy{
     @Override
     public void sendInfoOpponentPassed() {
         opponent.sendInfo("MARK_DEAD");
-
     }
 
     @Override
