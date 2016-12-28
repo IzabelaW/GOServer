@@ -30,7 +30,7 @@ public class Game implements IGameView {
     public void startGame() throws IOException {
 
         InetAddress addr = InetAddress.getByName("192.168.1.190");
-        ServerSocket listener = new ServerSocket(8900,50,addr);
+        ServerSocket listener = new ServerSocket(8900);
 
         try {
             while (true) {
