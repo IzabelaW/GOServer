@@ -118,6 +118,9 @@ public class Human extends Thread implements IPlayer {
                     opponent.sendInfoMarkDeadStones();
                     opponent.sumUp(listener);
                     ifOpponentPassed=false;
+                    opponent.makeGameDecision(listener);
+                    return;
+
 
                 } else {
                     opponent.sendInfoOpponentPassed();
@@ -151,7 +154,7 @@ public class Human extends Thread implements IPlayer {
             opponent.markArea(listener);
         }
         else if(response.equals("RESUME")){
-            opponent.makeGameDecision(listener);
+            return;
         }
     }
 
