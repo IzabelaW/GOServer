@@ -24,6 +24,7 @@ public class Room implements IPlayerMadeGameDecisionListener {
      */
     private AreaMarker areaMarker;
 
+    public Room(){}
 
     public Room(IPlayer initiator){
         this.initiator = initiator;

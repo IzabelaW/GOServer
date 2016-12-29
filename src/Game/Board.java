@@ -76,7 +76,7 @@ public class Board {
         return false;
     }
 
-    public boolean checkFullArea(int x, int y, PlayerColor playerColor) {
+    private boolean checkFullArea(int x, int y, PlayerColor playerColor) {
         int[][] testTab = new int[19][19];
 
         if (x < 0 || x >= 19 || y < 0 || y >= 19) return false;
@@ -130,7 +130,7 @@ public class Board {
         return board;
     }
 
-    public void setBoard(PlayerColor[][] board) {
+    void setBoard(PlayerColor[][] board) {
         this.board = board;
     }
 
@@ -166,7 +166,7 @@ public class Board {
         }
     }
 
-    public void countCaptured(PlayerColor playerColor){
+    private void countCaptured(PlayerColor playerColor){
         for (int i = 0; i < 19; i++) {
             for (int j = 0; j < 19; j++) {
                 if (stonesToRemove[i][j] == 1) {
@@ -201,11 +201,11 @@ public class Board {
         return false;
     }
 
-    public int getCapturedForWhite(){
+    int getCapturedForWhite(){
         return capturedForWhite;
     }
 
-    public int getCapturedForBlack(){
+    int getCapturedForBlack(){
         return capturedForBlack;
     }
 }
