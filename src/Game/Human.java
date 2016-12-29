@@ -150,24 +150,14 @@ public class Human extends Thread implements IPlayer {
         String response = in.readLine();
         if(response.startsWith("MARKED_AS_DEAD: ") && opponent instanceof Bot){
             sendInfo("BOT_ACCEPTED_DEAD_STONES");
-            ArrayList<String> markedAreaReadyToSend = new ArrayList<>();
             for(int i = 0; i < 19; i++){
                 for(int j = 0; j < 19; j++){
                     ArrayList<String> singleMarkedArea = new ArrayList<>();
                     singleMarkedArea = areaMarker.serwerMarkArea(i,j);
-                    if(singleMarkedArea != null) {
-                        for (String single : singleMarkedArea) {
-                            if (j == 0)
-                                markedAreaReadyToSend.add(single);
-                            else {
-                                if (single.equals("FREE"))
-                                    markedAreaReadyToSend.add(single);
-                            }
-                        }
-                    }
+                    sendInfo("SINGLE_MARKED_AREA: " + singleMarkedArea);
                 }
             }
-            sendInfo("SERWER_MARKED_AREA: " + markedAreaReadyToSend);
+            sendInfo("SERWER_MARKED_AREA");
         } else {
             opponent.sendInfo(response);
         }

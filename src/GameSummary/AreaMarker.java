@@ -55,21 +55,14 @@ public class AreaMarker {
         markedArea = new int[19][19];
         whoseArea = new ArrayList<>();
 
-        for (int m = 0; m < 361; m++)
-            whoseArea.add(PlayerColor.FREE);
-
         if (boardTab[i][j].equals(PlayerColor.FREE)) {
             flood_fill(i, j, 1);
-
-            if (whoseArea.indexOf(PlayerColor.FREE) != -1 &&
-                    whoseArea.indexOf(PlayerColor.BLACK) != -1 && whoseArea.indexOf(PlayerColor.WHITE) != -1){
+            if (whoseArea.indexOf(PlayerColor.BLACK) != -1 && whoseArea.indexOf(PlayerColor.WHITE) != -1){
                 markedAreaColor(PlayerColor.FREE);
             }
-            else if (whoseArea.indexOf(PlayerColor.FREE) != -1 &&
-                    whoseArea.indexOf(PlayerColor.BLACK) != -1 && whoseArea.indexOf(PlayerColor.WHITE) == -1){
+            else if (whoseArea.indexOf(PlayerColor.BLACK) != -1 && whoseArea.indexOf(PlayerColor.WHITE) == -1){
                 markedAreaColor(PlayerColor.BLACK);
-            } else if (whoseArea.indexOf(PlayerColor.FREE) != -1 &&
-                    whoseArea.indexOf(PlayerColor.BLACK) == -1 && whoseArea.indexOf(PlayerColor.WHITE) != -1){
+            } else if (whoseArea.indexOf(PlayerColor.BLACK) == -1 && whoseArea.indexOf(PlayerColor.WHITE) != -1){
                 markedAreaColor(PlayerColor.WHITE);
             }
         }
@@ -92,10 +85,10 @@ public class AreaMarker {
         for (int i = 0; i < 19; i++){
             for(int j = 0; j < 19; j++){
                 if(markedArea[i][j] != 0){
-                    markedAreaColor.add(color.toString());
+                    markedAreaColor.add(((i*18)+i+j),color.toString());
                 }
-                else{
-                    markedAreaColor.add(PlayerColor.FREE.toString());
+                else if(markedArea[i][j] == 0){
+                    markedAreaColor.add(((i*18)+i+j),PlayerColor.FREE.toString());
                 }
             }
         }
