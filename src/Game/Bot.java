@@ -16,10 +16,10 @@ public class Bot extends BotProxy{
     /**
      * Default login of bot
      */
-    Login login;
-    PlayerColor playerColor;
-    IPlayer opponent;
-    Random random = new Random();
+    private Login login;
+    private PlayerColor playerColor;
+    private IPlayer opponent;
+    private Random random = new Random();
 
     public Bot(){
         login = new Login("BOT");
@@ -40,9 +40,7 @@ public class Bot extends BotProxy{
     }
 
     @Override
-    public Login getLogin() {
-        return login;
-    }
+    public Login getLogin() { return login; }
 
     @Override
     public IPlayer getOpponent() {
@@ -50,58 +48,9 @@ public class Bot extends BotProxy{
     }
 
     @Override
-    public void sendMyLogin() {
-
-    }
-
-    @Override
     public void sendInfoOpponentPassed() {
         opponent.sendInfo("MARK_DEAD");
     }
-
-    @Override
-    public void sendUpdatedBoard(ArrayList<String> updatedBoard) {}
-
-    @Override
-    public void sendInfoIllegalMoveKO() {}
-
-    @Override
-    public void sendInfoIllegalMoveSuicide() {}
-
-    @Override
-    public void sendInfoIllegalMoveOccupiedField() {}
-
-    @Override
-    public void sendInfoLegalMove() {}
-
-    @Override
-    public void sendInfoCapturedStones(String capturedForWhite, String capturedForBlack) {}
-
-    @Override
-    public void sendInfoMarkDeadStones() throws IOException {}
-
-    @Override
-    public void setIfOpponentPassed(boolean ifPassed) {
-
-    }
-
-    @Override
-    public void sendInfo(String info) {}
-
-    @Override
-    public void sumUp(IPlayerMadeGameDecisionListener listener) throws IOException {}
-
-    @Override
-    public void markArea(IPlayerMadeGameDecisionListener listener) throws IOException {}
-
-    @Override
-    public void setAreaMarker(AreaMarker areaMarker) {}
-
-    @Override
-    public void disconnectPlayer() {}
-
-    @Override
-    public void deleteRoom() {}
 
     @Override
     public void setOpponent(IPlayer opponent) {
