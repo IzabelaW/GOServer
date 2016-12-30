@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 /**
  * Created by Izabela on 2016-12-30.
  */
-@SuppressWarnings("ALL")
+
 public class AreaMarkerTest {
     AreaMarker areaMarker;
     Board board;
@@ -70,7 +70,7 @@ public class AreaMarkerTest {
         ArrayList<String> markedArea1 = areaMarker.markArea(0,0);
         ArrayList<String> markedArea2 = areaMarker.markArea(4,0);
         ArrayList<String> markedArea3 = areaMarker.markArea(2,3);
-        ArrayList<String> markedArea4 = areaMarker.markArea(18,18);
+        ArrayList<String> markedArea4 = areaMarker.markArea(17,18);
 
         for (int i = 0; i < 361; i++){
             testArray1.add("0");
@@ -88,9 +88,9 @@ public class AreaMarkerTest {
         testArray3.add(42,"2");
         testArray3.add(60,"2");
 
-        testArray4.add(360,"1");
-        testArray4.add(359,"2");
-        testArray4.add(341,"2");
+        testArray4.add(341,"1");
+        testArray4.add(359,"3");
+        testArray4.add(360,"2");
 
         Assert.assertNotNull(markedArea1);
         Assert.assertNotNull(markedArea2);
@@ -112,11 +112,11 @@ public class AreaMarkerTest {
         Assert.assertFalse(markedArea4.get(359).equals("0"));
         Assert.assertFalse(markedArea4.get(341).equals("0"));
 
-        for (int i = 0; i < markedArea1.size(); i++) {
+        for (int i = 0; i < 361; i++) {
             Assert.assertEquals(testArray1.get(i), markedArea1.get(i));
             Assert.assertEquals(testArray2.get(i), markedArea2.get(i));
             Assert.assertEquals(testArray3.get(i), markedArea3.get(i));
-         //   Assert.assertEquals(testArray4.get(i), markedArea4.get(i)); źle nie wiem czemu
+            Assert.assertEquals(testArray4.get(i), markedArea4.get(i));
         }
     }
 
@@ -144,9 +144,9 @@ public class AreaMarkerTest {
         testArray3.add(42,"BLACK");
         testArray3.add(60,"BLACK");
 
-        testArray4.add(360,"WHITE");
-        testArray4.add(359,"WHITE");
         testArray4.add(341,"WHITE");
+        testArray4.add(359,"WHITE");
+        testArray4.add(360,"WHITE");
 
         ArrayList<String> serwerMarkedArea = null;
 
@@ -168,7 +168,7 @@ public class AreaMarkerTest {
                         }
                     } else if ((i == 18 && j == 17) || (i == 18 && j == 18) || (i == 17 && j == 18)){
                         for (int k = 0; k < 361; k++) {
-                      //      Assert.assertEquals(testArray4.get(k), serwerMarkedArea.get(k)); też źle i też nie wiem czemu
+                            Assert.assertEquals(testArray4.get(k), serwerMarkedArea.get(k));
                         }
                     }
             }
