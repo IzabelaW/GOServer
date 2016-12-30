@@ -30,7 +30,7 @@ public class Game implements IGameView {
     public void startGame() throws IOException {
 
         InetAddress addr = InetAddress.getByName("192.168.1.190");
-        ServerSocket listener = new ServerSocket(8900);
+        ServerSocket listener = new ServerSocket(8901);
 
         try {
             while (true) {
@@ -118,7 +118,7 @@ public class Game implements IGameView {
                 if (room.getJoiner() != null)
                     stringListOfPlayer2Logins.add(room.getJoiner().getLogin().toString());
                 else
-                    stringListOfPlayer2Logins.add("-");
+                    stringListOfPlayer2Logins.add(" ");
             }
         }
 

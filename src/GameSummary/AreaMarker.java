@@ -29,7 +29,7 @@ public class AreaMarker {
         return markedAreaToString();
     }
 
-    public void flood_fill(int x, int y, int number){
+    private void flood_fill(int x, int y, int number){
         if (x < 0 || x >= 19 || y < 0 || y >= 19) return;
 
         if (boardTab[x][y].equals(PlayerColor.BLACK) || boardTab[x][y].equals(PlayerColor.WHITE)) {
